@@ -1,5 +1,9 @@
 package com.unisk.ad.ssp.model;
 
+/**
+ * @author CutePrince
+ *
+ */
 public class Ssp2BidderParameter {
 
 	private String ad_id;
