@@ -1,7 +1,7 @@
 package com.unisk.ad.ssp.model;
 
 /**
- * @author CutePrince
+ * @author CutePrince 
  *
  */
 public class Ssp2BidderParameter {
