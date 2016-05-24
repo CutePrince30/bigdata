@@ -62,7 +62,9 @@ public class WebController {
 
 		// 解析bidder返回的数据
 		Map<String, Object> bidder2sspMap = JsonUtils.decode(bidder2sspStr, Map.class);
-		// 根据adid查库
+		
+		// 根据bidder返回数据的adid查库
+		
 		
 		// 将结果放入一个InfoJsParameter对象中
 
