@@ -3,6 +3,9 @@ package com.unisk.ad.ssp.controller.web;
 import java.io.IOException;
 import java.util.Map;
 
+import com.unisk.ad.ssp.dao.adp.InfoJsMapper;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,6 +25,9 @@ import com.unisk.ad.ssp.util.TemplateUtils;
 
 @Controller
 public class WebController {
+
+	@Autowired
+	private InfoJsMapper infoJsMapper;
 
 	@RequestMapping(value = "/main.js", method = RequestMethod.GET)
 	@ResponseBody
@@ -58,21 +64,24 @@ public class WebController {
 		String ssp2BidderParaStr = ssp2BidderTemplate.apply(new Ssp2BidderParameter());
 		
 		// 请求bidder
-		String bidder2sspStr = HttpUtils.doPost("127.0.0.1", ssp2BidderParaStr);
+		/*String bidder2sspStr = HttpUtils.doPost("127.0.0.1", ssp2BidderParaStr);*/
 
 		// 解析bidder返回的数据
-		Map<String, Object> bidder2sspMap = JsonUtils.decode(bidder2sspStr, Map.class);
+		/*Map<String, Object> bidder2sspMap = JsonUtils.decode(bidder2sspStr, Map.class);*/
 		
 		// 根据bidder返回数据的adid查库
-		
-		
+		String adid = "2188";
+		InfoJsParameter infoJsPara1 = infoJsMapper.selectOneByAdidFromAd(adid);
+		InfoJsParameter infoJsPara2 = infoJsMapper.selectOneByAdidFromStuff(adid);
+
 		// 将结果放入一个InfoJsParameter对象中
+		BeanUtils.copyProperties(infoJsPara1, infoJsPara2);
 
 		// 生成对应json文件
 		InfoJsTemplate infoJsTemplate = TemplateUtils.getTemplate(
 				"template/infojs_template", InfoJsTemplate.class);
 
-		return infoJsTemplate.apply(new InfoJsParameter());
+		return infoJsTemplate.apply(infoJsPara2);
 	}
 
 }

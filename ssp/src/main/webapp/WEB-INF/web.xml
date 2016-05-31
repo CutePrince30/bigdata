@@ -8,8 +8,8 @@
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
-			<!-- classpath:/mybatis/applicationContext-mybatis.xml
-			classpath:/ehcache/applicationContext-ehcache.xml -->
+			classpath:/mybatis/applicationContext-mybatis.xml
+			classpath:/ehcache/applicationContext-ehcache.xml
 			classpath*:/applicationContext.xml
 			<!-- /WEB-INF/applicationContext*.xml -->
 		</param-value>

@@ -18,6 +18,7 @@ public class HandlebarsTest {
 		Map<String, Object> map = JsonUtils.decode(userTmpl.apply(user), Map.class);
 		
 		System.out.println(map);
+
 	}
 	
 }

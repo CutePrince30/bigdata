@@ -1,8 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
-<mapper namespace="com.unisk.log.training4g.mvc.dao.export.Training4gLogExportTemplateMapper">
+<mapper namespace="com.unisk.ad.ssp.dao.adp.InfoJsMapper">
 
-	
+	<resultMap id="infoJsMapperFromAd" type="com.unisk.ad.ssp.model.InfoJsParameter">
+        <result column="media_name" property="spid" jdbcType="INTEGER" />
+        <result column="adType" property="adType" jdbcType="VARCHAR" />
+        <result column="has_text" property="hasText" jdbcType="INTEGER" />
+        <result column="width" property="width" jdbcType="INTEGER" />
+        <result column="height" property="height" jdbcType="INTEGER" />
+        <result column="show_js" property="thirdShowJs" jdbcType="CLOB" />
+        <result column="click_js" property="thirdClickJs" jdbcType="CLOB" />
+        <result column="media_type" property="viewType" jdbcType="INTEGER" />
+    </resultMap>
+
+    <resultMap id="infoJsMapperFromStuff" type="com.unisk.ad.ssp.model.InfoJsParameter">
+        <result column="type" property="type" jdbcType="INTEGER" />
+        <result column="addr" property="addr" jdbcType="INTEGER" />
+        <result column="text" property="text" jdbcType="CLOB" />
+    </resultMap>
+
+    <select id="selectOneByAdidFromAd" parameterType="java.lang.String" resultMap="infoJsMapperFromAd">
+        select * from adp_ad_info where adid=#{adid,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectOneByAdidFromStuff" parameterType="java.lang.String" resultMap="infoJsMapperFromStuff">
+        select * from adp_stuff_info where adid=#{adid,jdbcType=VARCHAR}
+    </select>
 
 </mapper>
