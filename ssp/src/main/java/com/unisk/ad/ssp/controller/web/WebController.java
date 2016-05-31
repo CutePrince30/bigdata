@@ -1,9 +1,10 @@
 package com.unisk.ad.ssp.controller.web;
 
 import java.io.IOException;
-import java.util.Map;
 
 import com.unisk.ad.ssp.dao.adp.InfoJsMapper;
+import com.unisk.ad.ssp.dao.ssp.Ssp2BidderMapper;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,8 +20,6 @@ import com.unisk.ad.ssp.model.Ssp2BidderParameter;
 import com.unisk.ad.ssp.templdate.InfoJsTemplate;
 import com.unisk.ad.ssp.templdate.MainJsTemplate;
 import com.unisk.ad.ssp.templdate.Ssp2BidderTemplate;
-import com.unisk.ad.ssp.util.HttpUtils;
-import com.unisk.ad.ssp.util.JsonUtils;
 import com.unisk.ad.ssp.util.TemplateUtils;
 
 @Controller
@@ -28,6 +27,9 @@ public class WebController {
 
 	@Autowired
 	private InfoJsMapper infoJsMapper;
+	
+	@Autowired
+	private Ssp2BidderMapper ssp2BidderMapper;
 
 	@RequestMapping(value = "/main.js", method = RequestMethod.GET)
 	@ResponseBody
@@ -56,12 +58,13 @@ public class WebController {
 			@RequestParam(value = "width_screen", required = false) String width_screen)
 			throws IOException {
 		// 根据id去数据库中查询数据
-
+		Ssp2BidderParameter ssp2BidderParameter = ssp2BidderMapper.selectOneBySlotId(slot_id);
+		
 		// 生成要发给ssp2bidder的数据
 		Ssp2BidderTemplate ssp2BidderTemplate = TemplateUtils.getTemplate(
 				"template/ssp2bidder_template", Ssp2BidderTemplate.class);
 
-		String ssp2BidderParaStr = ssp2BidderTemplate.apply(new Ssp2BidderParameter());
+		String ssp2BidderParaStr = ssp2BidderTemplate.apply(ssp2BidderParameter);
 		
 		// 请求bidder
 		/*String bidder2sspStr = HttpUtils.doPost("127.0.0.1", ssp2BidderParaStr);*/
@@ -81,6 +84,9 @@ public class WebController {
 		InfoJsTemplate infoJsTemplate = TemplateUtils.getTemplate(
 				"template/infojs_template", InfoJsTemplate.class);
 
+		infoJsPara2.setSn(sn);
+		infoJsPara2.setPushId("123");
+		
 		return infoJsTemplate.apply(infoJsPara2);
 	}
 

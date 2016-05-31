@@ -10,11 +10,11 @@
 		http://www.springframework.org/schema/aop 
 		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
-    <bean name="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+    <bean name="dataSourceSsp" class="com.alibaba.druid.pool.DruidDataSource"
           init-method="init" destroy-method="close">
-        <property name="url" value="${mysql_adp_url}"/>
-        <property name="username" value="${mysql_adp_username}"/>
-        <property name="password" value="${mysql_adp_password}"/>
+        <property name="url" value="${mysql_ssp_url}"/>
+        <property name="username" value="${mysql_ssp_username}"/>
+        <property name="password" value="${mysql_ssp_password}"/>
 
         <property name="initialSize" value="0"/>
         <property name="maxActive" value="20"/>
@@ -34,9 +34,9 @@
         <property name="filters" value="mergeStat"/>
     </bean>
 
-    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="dataSource"/>
-        <property name="mapperLocations" value="classpath*:com/unisk/ad/ssp/mapping/adp/*.xml"/>
+    <bean id="sqlSessionFactorySsp" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSourceSsp"/>
+        <property name="mapperLocations" value="classpath*:com/unisk/ad/ssp/mapping/ssp/*.xml"/>
         <property name="plugins">
             <bean class="com.github.pagehelper.PageHelper">
                 <property name="properties">
@@ -50,16 +50,16 @@
     </bean>
 
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.unisk.ad.ssp.dao.adp"/>
-        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+        <property name="basePackage" value="com.unisk.ad.ssp.dao.ssp"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactorySsp"/>
     </bean>
 
-    <bean id="transactionManager"
+    <bean id="transactionManagerSsp"
           class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource"/>
+        <property name="dataSource" ref="dataSourceSsp"/>
     </bean>
 
-    <tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+    <tx:advice id="transactionAdviceSsp" transaction-manager="transactionManagerSsp">
         <tx:attributes>
             <tx:method name="add*" propagation="REQUIRED"/>
             <tx:method name="append*" propagation="REQUIRED"/>
@@ -83,9 +83,8 @@
         </tx:attributes>
     </tx:advice>
     <aop:config>
-        <aop:pointcut id="transactionPointcut" expression="execution(* com.unisk.ad.ssp.dao.adp.*Mapper.*(..))"/>
-        <aop:advisor pointcut-ref="transactionPointcut"
-                     advice-ref="transactionAdvice"/>
+        <aop:pointcut id="transactionPointcut" expression="execution(* com.unisk.ad.ssp.dao.ssp.*Mapper.*(..))"/>
+        <aop:advisor pointcut-ref="transactionPointcut" advice-ref="transactionAdviceSsp"/>
     </aop:config>
 
 </beans>
