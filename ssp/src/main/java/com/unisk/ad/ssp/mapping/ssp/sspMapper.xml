@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.unisk.ad.ssp.dao.ssp.SspMapper">
+	
+	<resultMap id="ssp2BidderMapper" type="com.unisk.ad.ssp.model.Ssp2BidderParameter">
+		<result column="width" property="width" jdbcType="INTEGER" />
+		<result column="height" property="height" jdbcType="INTEGER" />
+	</resultMap>
+
+	<select id="selectOneBySlotId" parameterType="java.lang.String" resultMap="ssp2BidderMapper">
+		select * from ssp_slot where slot_id=#{slotId,jdbcType=VARCHAR}	
+	</select>
+
+</mapper>

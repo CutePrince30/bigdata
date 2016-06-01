@@ -1,7 +1,10 @@
 package com.unisk.ad.ssp.util;
 
 import java.io.IOException;
+import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +83,7 @@ public class JsonUtils {
 	 * 将json array反序列化为对象
 	 *
 	 * @param json
-	 * @param jsonTypeReference
+	 * @param typeReference
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -101,4 +104,32 @@ public class JsonUtils {
 		}
 		return null;
 	}
+
+	public static String findValueAsText(String json, String field) {
+		if (StringUtils.isEmpty(json)) {
+			return "";
+		}
+		synchronized (objectMapper) {
+			try {
+				return readValueAsText(objectMapper.readTree(json), field);
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return "";
+	}
+
+	public static List<String> readValuesAsText(JsonNode json, String field) {
+		return json.findValuesAsText(field);
+	}
+
+	public static String readValueAsText(JsonNode json, String field) {
+		List<String> list = json.findValuesAsText(field);
+		if (list.size() != 0) {
+			return list.get(0);
+		}
+		return "";
+	}
+
 }

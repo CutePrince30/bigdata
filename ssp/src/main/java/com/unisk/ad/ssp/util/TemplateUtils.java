@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.TypeSafeTemplate;
-import com.unisk.ad.ssp.templdate.InfoJsTemplate;
 
 public class TemplateUtils {
 
