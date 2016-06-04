@@ -1,0 +1,27 @@
+BCMain.Info.${obj.sn}= {
+	sn: "${obj.sn}",
+	data: {
+		aid: ${obj.adid},
+		spid: "${obj.spid}",
+		atype: ${obj.adType},
+		has_text: "${obj.hasText}",
+		w: ${obj.width},
+		h: ${obj.height},
+		show_js: "${obj.showJs}",
+		click_js: "${obj.clickJs}",
+		third_show_js: "${obj.thirdShowJs}",
+		third_click_js: "${obj.thirdClickJs}",
+		src: 1,
+		view_type: ${obj.viewType},
+		pushid: "${obj.pushId}",
+		staff: [{
+			"adid": ${obj.adid},
+			"landing_page": "${obj.landingPage}",
+			"type": "${obj.type}",
+			"height": ${obj.height},
+			"width": ${obj.width},
+			"addr": "${obj.addr}",
+			"text": "${obj.text}"
+		}]
+	}
+}

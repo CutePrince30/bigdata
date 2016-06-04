@@ -132,4 +132,16 @@ public class JsonUtils {
 		return "";
 	}
 
+	public static JsonNode readTree(String json) {
+		synchronized (objectMapper) {
+			try {
+				return objectMapper.readTree(json);
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+
 }

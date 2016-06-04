@@ -19,6 +19,8 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -40,6 +42,8 @@ import java.util.Map;
  *
  */
 public class HttpUtils {
+
+	private static Logger log = LoggerFactory.getLogger(HttpUtils.class);
 	
 	private static PoolingHttpClientConnectionManager connMgr;
 	private static RequestConfig requestConfig;
@@ -176,7 +180,7 @@ public class HttpUtils {
 			HttpResponse response = httpClient.execute(httpGet);
 			int statusCode = response.getStatusLine().getStatusCode();
 
-			System.out.println("执行状态码 : " + statusCode);
+			log.info("执行状态码 : {}", statusCode);
 
 			HttpEntity entity = response.getEntity();
 			if (entity != null) {
@@ -227,7 +231,6 @@ public class HttpUtils {
 			httpPost.setEntity(new UrlEncodedFormEntity(pairList, Charset
 					.forName("UTF-8")));
 			response = httpClient.execute(httpPost);
-			System.out.println(response.toString());
 			HttpEntity entity = response.getEntity();
 			httpStr = EntityUtils.toString(entity, "UTF-8");
 		}
@@ -263,14 +266,16 @@ public class HttpUtils {
 
 		try {
 			httpPost.setConfig(requestConfig);
-			StringEntity stringEntity = new StringEntity(json.toString(),
-					"UTF-8");// 解决中文乱码问题
+			// 解决中文乱码问题
+			StringEntity stringEntity = new StringEntity(json.toString(), "UTF-8");
 			stringEntity.setContentEncoding("UTF-8");
 			stringEntity.setContentType("application/json");
 			httpPost.setEntity(stringEntity);
 			response = httpClient.execute(httpPost);
 			HttpEntity entity = response.getEntity();
-			System.out.println(response.getStatusLine().getStatusCode());
+
+			log.info("执行状态码 : {}", response.getStatusLine().getStatusCode());
+
 			httpStr = EntityUtils.toString(entity, "UTF-8");
 		}
 		catch (IOException e) {

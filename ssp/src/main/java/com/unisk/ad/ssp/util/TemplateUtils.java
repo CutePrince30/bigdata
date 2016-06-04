@@ -2,38 +2,44 @@ package com.unisk.ad.ssp.util;
 
 import java.io.IOException;
 
-import com.github.jknack.handlebars.Handlebars;
-import com.github.jknack.handlebars.TypeSafeTemplate;
+import org.beetl.core.Configuration;
+import org.beetl.core.GroupTemplate;
+import org.beetl.core.Template;
+import org.beetl.core.resource.ClasspathResourceLoader;
 
+/**
+ * 生成模版类
+ */
 public class TemplateUtils {
 
-	private static Handlebars handlebars;
-	
-	public static Handlebars create() {
-		if (handlebars != null) {
-			return handlebars;
+	private static GroupTemplate gt;
+
+	public static GroupTemplate create() {
+		if (gt != null) {
+			return gt;
 		}
 		synchronized (TemplateUtils.class) {
-			if (handlebars == null) {
+			if (gt == null) {
 				return newInstance();
 			}
-			return handlebars;
+			return gt;
 		}
 	}
 
-	private static Handlebars newInstance() {
-		return new Handlebars();
-	}
-	
-	public static <T, S extends TypeSafeTemplate<T>> S getTemplate(String compileStr, final Class<S> type) {
-		S template = null;
+	private static GroupTemplate newInstance() {
+		ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader();
+		Configuration cfg = null;
 		try {
-			template = TemplateUtils.create().compile(compileStr).as(type);
+			cfg = Configuration.defaultConfiguration();
 		}
 		catch (IOException e) {
 			e.printStackTrace();
 		}
-		return template;
+		return new GroupTemplate(resourceLoader, cfg);
+	}
+
+	public static Template getTemplate(String path) {
+		return create().getTemplate(path);
 	}
 
 }

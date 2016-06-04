@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="beetl-2.4.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/ssp/src/main/webapp/WEB-INF/web/lib/beetl-2.4.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/Downloads/repository/beetl/beetl-2.4.0-all/beetl-2.4.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

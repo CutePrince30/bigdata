@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 /**
  * Created by sunyunjie on 5/31/16.
@@ -13,9 +14,15 @@ public class JacksonTest {
     public static void main(String[] args) {
         ObjectMapper mapper = new ObjectMapper();
         try {
-            JsonNode node = mapper.readTree("{\"id\":\"f0ec439aac8e9eb5a4c151aba5b18ebb\",\"seatbid\":[{\"bid\":[{\"adid\":\"1326\",\"wurl\":\"http://dsp.example.com/winnotice?price=%%WIN_PRICE%%\",\"adurl\":\"http://www.baidu.com\",\"nurl\":{\"0\":[\"url1\",\"url2\"]},\"admt\":4,\"price\":12000,\"curl\":[\"http://dsp1.com/adclick?id=123398923\"],\"crid\":\"2376\",\"adh\":50,\"adw\":320,\"impid\":\"5cdef32a55397c48b8baeb3cee0c5b5c\"}],\"ext\":{}}]}");
-            System.out.println(node.findValuesAsText("adurl"));
-            System.out.println(node.findValues("0"));
+            JsonNode node = mapper.readTree("{\"appid\":\"xxx\",\"slotid\":\"xxx\",\"device\":{\"ip\":\"10.23.45.67\",\"os\":\"iOS\",\"model\":\"iPhone5,1\",\"geo\":{\"lon\":116.4736795,\"type\":1,\"lat\":39.9960702},\"osv\":\"7.0.6\",\"js\":1,\"dnt\":0,\"sh\":1024,\"s_density\":2,\"connectiontype\":2,\"dpidsha1\":\"7c222fb2927d828af22f592134e8932480637c0d\",\"didsha1\":\"1231231238912839123812\",\"macsha1\":\"2445934589348534534534\",\"ua\":\"Mozilla/5.0 (iPhone; CPU iPhone OS 7_0_6 like Mac OS X)AppleWebKit/534.46 (KHTML, like Gecko) Mobile/9B206\",\"carrier\":\"46000\",\"language\":\"zh\",\"make\":\"Apple\",\"sw\":768,\"imei\":\"12312312312312\"}}");
+
+            System.out.println(new ObjectMapper().writeValueAsString(node.findPath("device")));
+
+//            Iterator<String> keys = node.fieldNames();
+//            while (keys.hasNext()) {
+//                String fieldName = keys.next();
+//                System.out.println(fieldName + ": " + node.path(fieldName).toString());
+//            }
         }
         catch (IOException e) {
             e.printStackTrace();

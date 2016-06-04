@@ -7,8 +7,6 @@
         <result column="media_name" property="spid" jdbcType="INTEGER" />
         <result column="adType" property="adType" jdbcType="VARCHAR" />
         <result column="has_text" property="hasText" jdbcType="INTEGER" />
-        <result column="width" property="width" jdbcType="INTEGER" />
-        <result column="height" property="height" jdbcType="INTEGER" />
         <result column="show_js" property="thirdShowJs" jdbcType="CLOB" />
         <result column="click_js" property="thirdClickJs" jdbcType="CLOB" />
         <result column="media_type" property="viewType" jdbcType="INTEGER" />

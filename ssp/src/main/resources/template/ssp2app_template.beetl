@@ -1,0 +1,6 @@
+{
+    "landing_page" : "${obj.landingPage}",
+    "addr" : "${obj.addr}",
+    "height" : "${obj.height}",
+    "width" : "${obj.width}"
+}

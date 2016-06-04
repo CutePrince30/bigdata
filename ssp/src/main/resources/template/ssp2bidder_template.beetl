@@ -1,0 +1,33 @@
+{
+    "id": "${obj.reqid}",
+    "media_type": ${obj.mediaType},
+    "app": {
+        "id" : "${obj.appid}",
+        "cat" : [
+            ${obj.category}
+        ],
+        "storeurl" : "${obj.storeUrl}",
+        "name" : "${obj.appName}",
+        "bundle" : "${obj.appBundle}",
+        "ver" : "${obj.appVersion}"
+    },
+    "site": {
+        "site_id" : "${obj.siteid}",
+        "site_name" : "${obj.siteName}",
+        "page" : "${obj.sitePage}",
+        "refer" : "${obj.siteRefer}"
+    },
+    "imp": [
+        {
+            "id" : "${obj.slotid}",
+            "instl" : ${obj.instl},
+            "banner" : {
+                "w" : ${obj.width},
+                "h" : ${obj.height},
+                "pos" : 1
+            }
+        }
+    ],
+    "device" : ${obj.device},
+    "user" : ${obj.user}
+}
