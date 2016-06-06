@@ -7,6 +7,7 @@ import com.unisk.ad.ssp.dao.adp.AdpMapper;
 import com.unisk.ad.ssp.model.InfoJsParameter;
 import com.unisk.ad.ssp.model.Ssp2AppParameter;
 import com.unisk.ad.ssp.util.BeanUtils;
+import com.unisk.ad.ssp.util.HttpUtils;
 import com.unisk.ad.ssp.util.JsonUtils;
 import com.unisk.ad.ssp.util.TemplateUtils;
 import org.beetl.core.Template;
@@ -18,7 +19,7 @@ import java.util.Map;
 import static com.unisk.ad.ssp.config.ClientType.*;
 
 /**
- * @author sunyunjie
+ * @author sunyunjie (jaysunyun_361@163.com)
  */
 @Component
 public class BidderRespDispatcher {
@@ -55,11 +56,11 @@ public class BidderRespDispatcher {
                 final String wurl = JsonUtils.readValueAsText(node, "wurl");
 
                 // 返回bidder请求结果
-                //        new Thread() {
-                //            public void run() {
-                //                HttpUtils.doGet(wurl);
-                //            }
-                //        }.start();
+                new Thread() {
+                    public void run() {
+                        HttpUtils.doGet(wurl);
+                    }
+                }.start();
 
                 //		String adid = "2166";
 
@@ -100,6 +101,14 @@ public class BidderRespDispatcher {
                 String width = JsonUtils.readValueAsText(bidder2sspNode, "adw");
                 String height = JsonUtils.readValueAsText(bidder2sspNode, "adh");
                 String landingPage = JsonUtils.readValueAsText(bidder2sspNode, "adurl");
+                final String wurl = JsonUtils.readValueAsText(bidder2sspNode, "wurl");
+
+                // 返回bidder请求结果
+                new Thread() {
+                    public void run() {
+                        HttpUtils.doGet(wurl);
+                    }
+                }.start();
 
                 Ssp2AppParameter ssp2AppParameter = new Ssp2AppParameter(landingPage, addr, height, width);
                 Template ssp2AppTemplate = TemplateUtils.getTemplate("/template/ssp2app_template.beetl");

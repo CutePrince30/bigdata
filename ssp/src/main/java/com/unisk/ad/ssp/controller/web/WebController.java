@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.unisk.ad.ssp.config.ClientType;
+import com.unisk.ad.ssp.config.Constants;
 import com.unisk.ad.ssp.config.MediaType;
 import com.unisk.ad.ssp.config.Operate;
 
@@ -52,22 +53,27 @@ public class WebController {
             @RequestParam(value = "width_screen", required = false) String width_screen)
             throws IOException {
 
-        String ssp2BidderParaStr = bidderReqIntegrator.generateBidderReq(MediaType.APP, null, null, slotid, null);
+        String ssp2BidderParaStr = bidderReqIntegrator.generateBidderReq(MediaType.WEB, null, null, slotid, null);
 
-        System.out.println(ssp2BidderParaStr);
+        if (log.isDebugEnabled()) {
+            log.debug("send to bidder: {}", ssp2BidderParaStr);
+        }
 
         // 请求bidder
-//		String bidder2sspStr = null;
-//		try {
-//			bidder2sspStr = HttpUtils.doPost("127.0.0.1", ssp2BidderParaStr);
-//		}
-//		catch (Exception e) {
-//			log.info("向bidder发送请求失败: {}", e);
-//			return "failed";
-//		}
+		String bidder2sspStr = null;
+		try {
+			bidder2sspStr = HttpUtils.doPost(Constants.BIDDER_URL, ssp2BidderParaStr);
+		}
+		catch (Exception e) {
+			log.info("向bidder发送请求失败: {}", e);
+			return "failed";
+		}
 
+        if (log.isDebugEnabled()) {
+            log.debug("received from bidder: {}", bidder2sspStr);
+        }
         // 模拟bidder返回数据
-        String bidder2sspStr = "{\"id\":\"f0ec439aac8e9eb5a4c151aba5b18ebb\",\"seatbid\":[{\"adid\":\"2166\",\"impid\":\"5cdef32a55397c48b8baeb3cee0c5b5c\",\"wurl\":\"http://dsp.example.com/xxbidres?pushid=xxx&spid=xxx&adid=xxx&src=xxx&default=xxx\",\"adurl\":\"http://www.baidu.com\",\"nurl\":{\"0\":[\"url1\",\"url2\"]},\"curl\":[\"http://dsp1.com/adclick?id=123398923\"],\"adi\":\"http://www.baidu.com/pic/123.jpg\",\"admt\":1,\"adw\":320,\"adh\":50,\"ext\":{}}]}";
+        //String bidder2sspStr = "{\"id\":\"f0ec439aac8e9eb5a4c151aba5b18ebb\",\"seatbid\":[{\"adid\":\"2166\",\"impid\":\"5cdef32a55397c48b8baeb3cee0c5b5c\",\"wurl\":\"http://dsp.example.com/xxbidres?pushid=xxx&spid=xxx&adid=xxx&src=xxx&default=xxx\",\"adurl\":\"http://www.baidu.com\",\"nurl\":{\"0\":[\"url1\",\"url2\"]},\"curl\":[\"http://dsp1.com/adclick?id=123398923\"],\"adi\":\"http://www.baidu.com/pic/123.jpg\",\"admt\":1,\"adw\":320,\"adh\":50,\"ext\":{}}]}";
 
         Map<String, Object> otherParaMap = Maps.newHashMap();
         otherParaMap.put("sn", sn);
@@ -75,6 +81,14 @@ public class WebController {
         String resp = bidderRespDispatcher.generateResp(ClientType.WEB, Operate.SHOW, bidder2sspStr, otherParaMap);
 
         return resp;
+    }
+
+    @RequestMapping(value = "/create", method = RequestMethod.GET)
+    public String create() {
+        // 向数据库中插入数据
+
+        // 记录日志
+        return null;
     }
 
 }
