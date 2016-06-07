@@ -40,7 +40,7 @@ public class WebController {
     @ResponseBody
     public String mainJS() throws IOException {
         Template template = TemplateUtils.getTemplate("/template/mainjs_template.beetl");
-        template.binding("host", "127.0.0.1");
+        template.binding("host", Constants.SSP_IP);
         return template.render();
     }
 

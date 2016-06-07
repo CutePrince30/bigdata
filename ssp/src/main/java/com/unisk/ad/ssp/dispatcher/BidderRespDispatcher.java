@@ -2,6 +2,7 @@ package com.unisk.ad.ssp.dispatcher;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.unisk.ad.ssp.config.ClientType;
+import com.unisk.ad.ssp.config.Constants;
 import com.unisk.ad.ssp.config.Operate;
 import com.unisk.ad.ssp.dao.adp.AdpMapper;
 import com.unisk.ad.ssp.model.InfoJsParameter;
@@ -62,8 +63,6 @@ public class BidderRespDispatcher {
                     }
                 }.start();
 
-                //		String adid = "2166";
-
                 // 根据bidder返回数据的adid查库
                 InfoJsParameter infoJsPara1 = adpMapper.selectOneByAdidFromAd(adid);
                 InfoJsParameter infoJsPara2 = adpMapper.selectOneByAdidFromStuff(adid);
@@ -73,8 +72,8 @@ public class BidderRespDispatcher {
                     BeanUtils.merge(infoJsPara1, infoJsPara2);
                 }
                 infoJsPara2.setSn(otherParaMap.get("sn").toString());
-                infoJsPara2.setClickJs("http://121.40.134.209/click.js");
-                infoJsPara2.setShowJs("http://121.40.134.209/show.js");
+                infoJsPara2.setClickJs(Constants.CLICK_JS);
+                infoJsPara2.setShowJs(Constants.SHOW_JS);
                 infoJsPara2.setHeight(height);
                 infoJsPara2.setWidth(width);
                 infoJsPara2.setLandingPage(landingPage);
