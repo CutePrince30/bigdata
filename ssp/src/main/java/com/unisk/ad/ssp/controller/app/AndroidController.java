@@ -50,16 +50,17 @@ public class AndroidController extends AppController {
         }
 
         if (StringUtils.isEmpty(ssp2BidderParaStr)) {
-            return "failed: ssp向bidder请求参数有误";
+            return RenderUtils.render(Constants.FAILED_CODE, "failed: ssp向bidder请求参数有误", Constants.EMPTY_STRING);
         }
+
         // 请求bidder
 		String bidder2sspStr = null;
 		try {
 			bidder2sspStr = HttpUtils.doPost(Constants.BIDDER_URL, ssp2BidderParaStr);
 		}
 		catch (Exception e) {
-			log.info("向bidder发送请求失败: {}", e);
-			return "failed";
+            log.error("向bidder发送请求失败,请检查网络: {}", e);
+            return RenderUtils.render(Constants.FAILED_CODE, "failed: 向bidder发送请求失败", Constants.EMPTY_STRING);
 		}
 
         if (log.isDebugEnabled()) {
@@ -67,12 +68,12 @@ public class AndroidController extends AppController {
         }
 
         if (bidder2sspStr == null) {
-            return "failed: bidder无返回数据或程序解析错误";
+            return RenderUtils.render(Constants.FAILED_CODE, "failed: bidder无返回数据或程序解析错误", Constants.EMPTY_STRING);
         }
 
         String resp = bidderRespDispatcher.generateResp(ClientType.ANDROID, Operate.SHOW, bidder2sspStr, null);
 
-        return RenderUtils.render(200, "success", resp);
+        return RenderUtils.render(Constants.SUCCESS_CODE, "success", resp);
     }
 
 }

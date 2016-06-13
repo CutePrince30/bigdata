@@ -12,6 +12,7 @@ import com.unisk.ad.ssp.config.Operate;
 import com.unisk.ad.ssp.dispatcher.BidderRespDispatcher;
 import com.unisk.ad.ssp.integrator.BidderReqIntegrator;
 import com.unisk.ad.ssp.util.*;
+import org.apache.commons.lang3.StringUtils;
 import org.beetl.core.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,21 +60,27 @@ public class WebController {
             log.debug("send to bidder: {}", ssp2BidderParaStr);
         }
 
+        if (StringUtils.isEmpty(ssp2BidderParaStr)) {
+            return RenderUtils.render(Constants.FAILED_CODE, "failed: ssp向bidder请求参数有误", Constants.EMPTY_STRING);
+        }
+
         // 请求bidder
 		String bidder2sspStr = null;
 		try {
 			bidder2sspStr = HttpUtils.doPost(Constants.BIDDER_URL, ssp2BidderParaStr);
 		}
 		catch (Exception e) {
-			log.info("向bidder发送请求失败: {}", e);
-			return "failed";
+            log.error("向bidder发送请求失败,请检查网络: {}", e);
+            return RenderUtils.render(Constants.FAILED_CODE, "failed: 向bidder发送请求失败", Constants.EMPTY_STRING);
 		}
 
         if (log.isDebugEnabled()) {
             log.debug("received from bidder: {}", bidder2sspStr);
         }
-        // 模拟bidder返回数据
-        //String bidder2sspStr = "{\"id\":\"f0ec439aac8e9eb5a4c151aba5b18ebb\",\"seatbid\":[{\"adid\":\"2166\",\"impid\":\"5cdef32a55397c48b8baeb3cee0c5b5c\",\"wurl\":\"http://dsp.example.com/xxbidres?pushid=xxx&spid=xxx&adid=xxx&src=xxx&default=xxx\",\"adurl\":\"http://www.baidu.com\",\"nurl\":{\"0\":[\"url1\",\"url2\"]},\"curl\":[\"http://dsp1.com/adclick?id=123398923\"],\"adi\":\"http://www.baidu.com/pic/123.jpg\",\"admt\":1,\"adw\":320,\"adh\":50,\"ext\":{}}]}";
+
+        if (bidder2sspStr == null) {
+            return RenderUtils.render(Constants.FAILED_CODE, "failed: bidder无返回数据或程序解析错误", Constants.EMPTY_STRING);
+        }
 
         Map<String, Object> otherParaMap = Maps.newHashMap();
         otherParaMap.put("sn", sn);
