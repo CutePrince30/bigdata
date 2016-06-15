@@ -54,7 +54,7 @@ public class WebController {
             @RequestParam(value = "width_screen", required = false) String width_screen)
             throws IOException {
 
-        String ssp2BidderParaStr = bidderReqIntegrator.generateBidderReq(MediaType.WEB, null, null, slotid, null);
+        String ssp2BidderParaStr = bidderReqIntegrator.generateBidderShowReq(MediaType.WEB, null, null, slotid, null);
 
         if (log.isDebugEnabled()) {
             log.debug("send to bidder: {}", ssp2BidderParaStr);

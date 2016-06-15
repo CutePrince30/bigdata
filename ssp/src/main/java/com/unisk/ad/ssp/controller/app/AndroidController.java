@@ -3,27 +3,18 @@ package com.unisk.ad.ssp.controller.app;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.unisk.ad.ssp.config.ClientType;
 import com.unisk.ad.ssp.config.Constants;
-import com.unisk.ad.ssp.config.MediaType;
 import com.unisk.ad.ssp.config.Operate;
-import com.unisk.ad.ssp.dispatcher.BidderRespDispatcher;
-import com.unisk.ad.ssp.integrator.BidderReqIntegrator;
-import com.unisk.ad.ssp.model.Ssp2AppParameter;
 import com.unisk.ad.ssp.util.HttpUtils;
 import com.unisk.ad.ssp.util.JsonUtils;
 import com.unisk.ad.ssp.util.RenderUtils;
-import com.unisk.ad.ssp.util.TemplateUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.beetl.core.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.io.IOException;
 
 /**
  * @author sunyunjie (jaysunyun_361@163.com)
@@ -43,7 +34,7 @@ public class AndroidController extends AppController {
             log.debug("received from android: {}", data);
         }
 
-        String ssp2BidderParaStr = super.generateBidderReq(data);
+        String ssp2BidderParaStr = super.generateBidderShowReq(data);
 
         if (log.isDebugEnabled()) {
             log.debug("send to ssp2bidder: {}", ssp2BidderParaStr);
@@ -74,6 +65,30 @@ public class AndroidController extends AppController {
         String resp = bidderRespDispatcher.generateResp(ClientType.ANDROID, Operate.SHOW, bidder2sspStr, null);
 
         return RenderUtils.render(Constants.SUCCESS_CODE, "success", resp);
+
+    }
+
+    @RequestMapping(value = "/click", method = RequestMethod.POST)
+    @ResponseBody
+    public String click(@RequestParam(value = "data", required = true) String data) {
+
+        if (log.isDebugEnabled()) {
+            log.debug("received from android: {}", data);
+        }
+
+        String ssp2BidderParaStr = super.generateBidderClickReq(data);
+        // 因为不需要利用bidder返回的数据,所以启动线程向bibber发起请求
+
+        super.sendBidderClickAsyncReq(ssp2BidderParaStr);
+
+        //返回给客户端landing_page
+        JsonNode dataNode = JsonUtils.readTree(data);
+        String landing_page = JsonUtils.readValueAsText(dataNode, "landing_page");
+
+        String resp = bidderRespDispatcher.generateResp(ClientType.ANDROID, Operate.CLICK, landing_page, null);
+
+        return RenderUtils.render(Constants.SUCCESS_CODE, "success", resp);
+
     }
 
 }

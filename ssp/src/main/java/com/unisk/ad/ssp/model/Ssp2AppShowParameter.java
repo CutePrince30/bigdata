@@ -3,12 +3,12 @@ package com.unisk.ad.ssp.model;
 /**
  * Created by sunyunjie on 6/2/16.
  */
-public class Ssp2AppParameter {
+public class Ssp2AppShowParameter {
 
-    public Ssp2AppParameter() {
+    public Ssp2AppShowParameter() {
     }
 
-    public Ssp2AppParameter(String landingPage, String addr, String height, String width) {
+    public Ssp2AppShowParameter(String landingPage, String addr, String height, String width) {
         this.landingPage = landingPage;
         this.addr = addr;
         this.height = height;

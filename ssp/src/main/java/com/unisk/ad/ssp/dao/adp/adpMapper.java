@@ -7,8 +7,8 @@ import com.unisk.ad.ssp.model.InfoJsParameter;
  */
 public interface AdpMapper {
 
-    public InfoJsParameter selectOneByAdidFromAd(String adid);
+    InfoJsParameter selectOneByAdidFromAd(String adid);
 
-    public InfoJsParameter selectOneByAdidFromStuff(String adid);
+    InfoJsParameter selectOneByAdidFromStuff(String adid);
 
 }

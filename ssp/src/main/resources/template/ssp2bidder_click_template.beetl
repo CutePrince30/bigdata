@@ -1,0 +1,7 @@
+{
+    "appid" : "${obj.appid}",
+    "slotid" : "${obj.slotid}",
+    "pushid" : "${obj.pushid}",
+    "adid" : "${obj.adid}",
+    "landing_page" : "${obj.landing_page}"
+}

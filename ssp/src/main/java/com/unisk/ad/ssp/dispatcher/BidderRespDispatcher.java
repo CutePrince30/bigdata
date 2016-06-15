@@ -6,7 +6,8 @@ import com.unisk.ad.ssp.config.Constants;
 import com.unisk.ad.ssp.config.Operate;
 import com.unisk.ad.ssp.dao.adp.AdpMapper;
 import com.unisk.ad.ssp.model.InfoJsParameter;
-import com.unisk.ad.ssp.model.Ssp2AppParameter;
+import com.unisk.ad.ssp.model.Ssp2AppClickParameter;
+import com.unisk.ad.ssp.model.Ssp2AppShowParameter;
 import com.unisk.ad.ssp.util.BeanUtils;
 import com.unisk.ad.ssp.util.HttpUtils;
 import com.unisk.ad.ssp.util.JsonUtils;
@@ -15,9 +16,8 @@ import org.beetl.core.Template;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
-
-import static com.unisk.ad.ssp.config.ClientType.*;
 
 /**
  * @author sunyunjie (jaysunyun_361@163.com)
@@ -93,6 +93,9 @@ public class BidderRespDispatcher {
 
     public String generateAppResp(Operate op, String respStr, Map<String, Object> otherParaMap) {
         String result = null;
+        Object obj = null;
+        Template ssp2AppTemplate = null;
+
         switch (op) {
             case SHOW:
                 JsonNode bidder2sspNode = JsonUtils.readTree(respStr);
@@ -109,17 +112,20 @@ public class BidderRespDispatcher {
                     }
                 }.start();
 
-                Ssp2AppParameter ssp2AppParameter = new Ssp2AppParameter(landingPage, addr, height, width);
-                Template ssp2AppTemplate = TemplateUtils.getTemplate("/template/ssp2app_template.beetl");
-                ssp2AppTemplate.binding("obj", ssp2AppParameter);
-                result = ssp2AppTemplate.render();
+                obj = new Ssp2AppShowParameter(landingPage, addr, height, width);
+                ssp2AppTemplate = TemplateUtils.getTemplate("/template/ssp2app_template_show.beetl");
+
                 break;
             case CLICK:
+                obj = new Ssp2AppClickParameter(respStr);
+                ssp2AppTemplate = TemplateUtils.getTemplate("/template/ssp2app_template_click.beetl");
                 break;
             case CREATE:
                 break;
         }
-        return result;
+        ssp2AppTemplate.binding("obj", obj);
+
+        return ssp2AppTemplate.render();
     }
 
 }

@@ -38,7 +38,7 @@ public class IOSController extends AppController {
             log.debug("received from ios: {}", data);
         }
 
-        String ssp2BidderParaStr = super.generateBidderReq(data);
+        String ssp2BidderParaStr = super.generateBidderShowReq(data);
 
         if (log.isDebugEnabled()) {
             log.debug("send to ssp2bidder: {}", ssp2BidderParaStr);
@@ -69,6 +69,29 @@ public class IOSController extends AppController {
         String resp = bidderRespDispatcher.generateResp(ClientType.IOS, Operate.SHOW, bidder2sspStr, null);
 
         return RenderUtils.render(Constants.SUCCESS_CODE, "success", resp);
+    }
+
+    @RequestMapping(value = "/click", method = RequestMethod.POST)
+    @ResponseBody
+    public String click(@RequestParam(value = "data", required = true) String data) {
+
+        if (log.isDebugEnabled()) {
+            log.debug("received from ios: {}", data);
+        }
+
+        String ssp2BidderParaStr = super.generateBidderClickReq(data);
+        // 因为不需要利用bidder返回的数据,所以启动线程向bibber发起请求
+
+        super.sendBidderClickAsyncReq(ssp2BidderParaStr);
+
+        //返回给客户端landing_page
+        JsonNode dataNode = JsonUtils.readTree(data);
+        String landing_page = JsonUtils.readValueAsText(dataNode, "landing_page");
+
+        String resp = bidderRespDispatcher.generateResp(ClientType.IOS, Operate.CLICK, landing_page, null);
+
+        return RenderUtils.render(Constants.SUCCESS_CODE, "success", resp);
+
     }
 
 }

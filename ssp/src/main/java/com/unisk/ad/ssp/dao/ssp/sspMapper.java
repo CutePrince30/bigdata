@@ -1,9 +1,9 @@
 package com.unisk.ad.ssp.dao.ssp;
 
-import com.unisk.ad.ssp.model.Ssp2BidderParameter;
+import com.unisk.ad.ssp.model.Ssp2BidderShowParameter;
 
 public interface SspMapper {
 
-	public Ssp2BidderParameter selectOneBySlotId(String slotId);
+	Ssp2BidderShowParameter selectOneBySlotId(String slotId);
 	
 }
