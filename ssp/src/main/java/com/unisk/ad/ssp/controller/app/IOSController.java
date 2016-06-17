@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @author sunyunjie (jaysunyun_361@163.com)
  */
@@ -29,16 +31,15 @@ public class IOSController extends AppController {
 
     private static Logger log = LoggerFactory.getLogger(IOSController.class);
 
-    @RequestMapping(value = "/show", method = RequestMethod.POST)
+    @RequestMapping(value = "/pull", method = RequestMethod.POST)
     @ResponseBody
-    public String show(@RequestParam(value = "data", required = true) String data) {
+    public String pull(@RequestParam(value = "data", required = true) String data) {
         //data = "{\"appid\":\"4\",\"slotid\":\"6\",\"device\":{\"ip\":\"10.23.45.67\",\"os\":\"iOS\",\"model\":\"iPhone5,1\",\"geo\":{\"lon\":116.4736795,\"type\":1,\"lat\":39.9960702},\"osv\":\"7.0.6\",\"js\":1,\"dnt\":0,\"sh\":1024,\"s_density\":2,\"connectiontype\":2,\"dpidsha1\":\"7c222fb2927d828af22f592134e8932480637c0d\",\"didsha1\":\"1231231238912839123812\",\"macsha1\":\"2445934589348534534534\",\"ua\":\"Mozilla/5.0 (iPhone; CPU iPhone OS 7_0_6 like Mac OS X)AppleWebKit/534.46 (KHTML, like Gecko) Mobile/9B206\",\"carrier\":\"46000\",\"language\":\"zh\",\"make\":\"Apple\",\"sw\":768,\"imei\":\"12312312312312\"}}";
-
         if (log.isDebugEnabled()) {
             log.debug("received from ios: {}", data);
         }
 
-        String ssp2BidderParaStr = super.generateBidderShowReq(data);
+        String ssp2BidderParaStr = super.generateBidderPullReq(data);
 
         if (log.isDebugEnabled()) {
             log.debug("send to ssp2bidder: {}", ssp2BidderParaStr);
@@ -66,23 +67,35 @@ public class IOSController extends AppController {
             return RenderUtils.render(Constants.FAILED_CODE, "failed: bidder无返回数据或程序解析错误", Constants.EMPTY_STRING);
         }
 
-        String resp = bidderRespDispatcher.generateResp(ClientType.IOS, Operate.SHOW, bidder2sspStr, null);
+        String resp = bidderRespDispatcher.generateResp(ClientType.IOS, Operate.PULL, bidder2sspStr, null);
 
         return RenderUtils.render(Constants.SUCCESS_CODE, "success", resp);
     }
 
-    @RequestMapping(value = "/click", method = RequestMethod.POST)
+    @RequestMapping(value = "/show", method = RequestMethod.POST)
     @ResponseBody
-    public String click(@RequestParam(value = "data", required = true) String data) {
+    public String show(HttpServletRequest request, @RequestParam(value = "data", required = true) String data) {
+        String param = request.getQueryString();
 
         if (log.isDebugEnabled()) {
             log.debug("received from ios: {}", data);
         }
 
-        String ssp2BidderParaStr = super.generateBidderClickReq(data);
-        // 因为不需要利用bidder返回的数据,所以启动线程向bibber发起请求
+        super.sendBidderShowAsyncReq(param);
 
-        super.sendBidderClickAsyncReq(ssp2BidderParaStr);
+        return RenderUtils.render(Constants.SUCCESS_CODE, "success", "{}");
+    }
+
+    @RequestMapping(value = "/click", method = RequestMethod.POST)
+    @ResponseBody
+    public String click(HttpServletRequest request, @RequestParam(value = "data", required = true) String data) {
+        String param = request.getQueryString();
+
+        if (log.isDebugEnabled()) {
+            log.debug("received from ios: {}", data);
+        }
+
+        super.sendBidderClickAsyncReq(param);
 
         //返回给客户端landing_page
         JsonNode dataNode = JsonUtils.readTree(data);
@@ -91,7 +104,6 @@ public class IOSController extends AppController {
         String resp = bidderRespDispatcher.generateResp(ClientType.IOS, Operate.CLICK, landing_page, null);
 
         return RenderUtils.render(Constants.SUCCESS_CODE, "success", resp);
-
     }
 
 }

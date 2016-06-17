@@ -1,4 +1,8 @@
 {
+    "id" : "${obj.id}",
+    "adid" : "${obj.adid}",
+    "showjs" : "${obj.showjs}",
+    "clickjs" : "${obj.clickjs}",
     "landing_page" : "${obj.landingPage}",
     "addr" : "${obj.addr}",
     "height" : "${obj.height}",

@@ -3,7 +3,7 @@
 
 <mapper namespace="com.unisk.ad.ssp.dao.ssp.SspMapper">
 	
-	<resultMap id="ssp2BidderMapper" type="com.unisk.ad.ssp.model.Ssp2BidderShowParameter">
+	<resultMap id="ssp2BidderMapper" type="com.unisk.ad.ssp.model.Ssp2BidderPullParam">
         <result column="slot_id" property="slotid" jdbcType="INTEGER" />
 		<result column="width" property="width" jdbcType="INTEGER" />
 		<result column="height" property="height" jdbcType="INTEGER" />

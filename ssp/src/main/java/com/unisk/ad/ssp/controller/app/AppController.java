@@ -35,39 +35,48 @@ public class AppController {
      * @param data
      * @return
      */
-    protected String generateBidderShowReq(String data) {
+    protected String generateBidderPullReq(String data) {
         JsonNode dataNode = JsonUtils.readTree(data);
         String appid = JsonUtils.readValueAsText(dataNode, "appid");
         String slotid = JsonUtils.readValueAsText(dataNode, "slotid");
         String device = dataNode.findPath("device").toString();
 
-        return bidderReqIntegrator.generateBidderShowReq(MediaType.APP, appid, null, slotid, device);
+        return bidderReqIntegrator.generateBidderPullReq(MediaType.APP, appid, null, slotid, device);
     }
 
-    protected String generateBidderClickReq(String data) {
-        Map<String, Object> map = JsonUtils.decode(data, Map.class);
-        return bidderReqIntegrator.generateBidderClickReq(map);
-    }
-
-    protected void sendBidderClickAsyncReq(final String ssp2BidderParaStr) {
+    protected void sendBidderShowAsyncReq(final String param) {
         new Thread() {
             @Override
             public void run() {
-                if (StringUtils.isEmpty(ssp2BidderParaStr)) {
-                    log.error("failed: ssp向bidder请求参数有误, {}", ssp2BidderParaStr);
+                if (log.isDebugEnabled()) {
+                    log.debug("send to ssp2bidder: {}", param);
                 }
-                else {
-                    if (log.isDebugEnabled()) {
-                        log.debug("send to ssp2bidder: {}", ssp2BidderParaStr);
-                    }
-                    // 请求bidder
-                    String bidder2sspStr = null;
-                    try {
-                        HttpUtils.doPost(Constants.BIDDER_URL, ssp2BidderParaStr);
-                    }
-                    catch (Exception e) {
-                        log.error("向bidder发送请求失败,请检查网络: {}", e);
-                    }
+                // 请求bidder
+                String url = Constants.BIDDER_SHOWJS_URL + "?" + param;
+                try {
+                    HttpUtils.doGet(url);
+                }
+                catch (Exception e) {
+                    log.error("向bidder发送请求失败,请检查网络: {}", e);
+                }
+            }
+        }.start();
+    }
+
+    protected void sendBidderClickAsyncReq(final String param) {
+        new Thread() {
+            @Override
+            public void run() {
+                if (log.isDebugEnabled()) {
+                    log.debug("send to ssp2bidder: {}", param);
+                }
+                // 请求bidder
+                String url = Constants.BIDDER_CLICKJS_URL + "?" + param;
+                try {
+                    HttpUtils.doGet(url);
+                }
+                catch (Exception e) {
+                    log.error("向bidder发送请求失败,请检查网络: {}", e);
                 }
             }
         }.start();

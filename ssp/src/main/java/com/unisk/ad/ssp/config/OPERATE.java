@@ -5,6 +5,6 @@ package com.unisk.ad.ssp.config;
  */
 public enum Operate {
 
-    SHOW, CLICK, CREATE;
+    PULL, SHOW, CLICK, CREATE;
 
 }

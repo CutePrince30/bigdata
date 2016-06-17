@@ -37,7 +37,7 @@ public class WebController {
     @Autowired
     private BidderRespDispatcher bidderRespDispatcher;
 
-    @RequestMapping(value = "/show/main.js", method = RequestMethod.GET)
+    @RequestMapping(value = "/pull/main.js", method = RequestMethod.GET)
     @ResponseBody
     public String mainJS() throws IOException {
         Template template = TemplateUtils.getTemplate("/template/mainjs_template.beetl");
@@ -45,7 +45,7 @@ public class WebController {
         return template.render();
     }
 
-    @RequestMapping(value = "/show/info.js", method = RequestMethod.GET)
+    @RequestMapping(value = "/pull/info.js", method = RequestMethod.GET)
     @ResponseBody
     public String infoJS(
             @RequestParam(value = "sn", required = true) String sn,
@@ -54,7 +54,7 @@ public class WebController {
             @RequestParam(value = "width_screen", required = false) String width_screen)
             throws IOException {
 
-        String ssp2BidderParaStr = bidderReqIntegrator.generateBidderShowReq(MediaType.WEB, null, null, slotid, null);
+        String ssp2BidderParaStr = bidderReqIntegrator.generateBidderPullReq(MediaType.WEB, null, null, slotid, null);
 
         if (log.isDebugEnabled()) {
             log.debug("send to bidder: {}", ssp2BidderParaStr);
@@ -85,7 +85,7 @@ public class WebController {
         Map<String, Object> otherParaMap = Maps.newHashMap();
         otherParaMap.put("sn", sn);
 
-        String resp = bidderRespDispatcher.generateResp(ClientType.WEB, Operate.SHOW, bidder2sspStr, otherParaMap);
+        String resp = bidderRespDispatcher.generateResp(ClientType.WEB, Operate.PULL, bidder2sspStr, otherParaMap);
 
         return resp;
     }

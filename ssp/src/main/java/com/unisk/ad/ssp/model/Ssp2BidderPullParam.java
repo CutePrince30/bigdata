@@ -3,7 +3,7 @@ package com.unisk.ad.ssp.model;
 /**
  * @author sunyunjie (jaysunyun_361@163.com)
  */
-public class Ssp2BidderShowParameter {
+public class Ssp2BidderPullParam {
 
     private String reqid;
 
