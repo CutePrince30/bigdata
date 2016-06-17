@@ -104,7 +104,6 @@ public class AndroidController extends AppController {
         String resp = bidderRespDispatcher.generateResp(ClientType.ANDROID, Operate.CLICK, landing_page, null);
 
         return RenderUtils.render(Constants.SUCCESS_CODE, "success", resp);
-
     }
 
 }
