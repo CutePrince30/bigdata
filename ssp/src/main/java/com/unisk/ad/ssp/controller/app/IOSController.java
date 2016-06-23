@@ -1,6 +1,7 @@
 package com.unisk.ad.ssp.controller.app;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.collect.Maps;
 import com.unisk.ad.ssp.config.ClientType;
 import com.unisk.ad.ssp.config.Constants;
 import com.unisk.ad.ssp.config.MediaType;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * @author sunyunjie (jaysunyun_361@163.com)
@@ -29,11 +31,11 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class IOSController extends AppController {
 
-    private static Logger log = LoggerFactory.getLogger(IOSController.class);
+    private static Logger log = LoggerFactory.getLogger("ssp");
 
     @RequestMapping(value = "/pull", method = RequestMethod.POST)
     @ResponseBody
-    public String pull(@RequestParam(value = "data", required = true) String data) {
+    public String pull(HttpServletRequest request, @RequestParam(value = "data", required = true) String data) {
         //data = "{\"appid\":\"4\",\"slotid\":\"6\",\"device\":{\"ip\":\"10.23.45.67\",\"os\":\"iOS\",\"model\":\"iPhone5,1\",\"geo\":{\"lon\":116.4736795,\"type\":1,\"lat\":39.9960702},\"osv\":\"7.0.6\",\"js\":1,\"dnt\":0,\"sh\":1024,\"s_density\":2,\"connectiontype\":2,\"dpidsha1\":\"7c222fb2927d828af22f592134e8932480637c0d\",\"didsha1\":\"1231231238912839123812\",\"macsha1\":\"2445934589348534534534\",\"ua\":\"Mozilla/5.0 (iPhone; CPU iPhone OS 7_0_6 like Mac OS X)AppleWebKit/534.46 (KHTML, like Gecko) Mobile/9B206\",\"carrier\":\"46000\",\"language\":\"zh\",\"make\":\"Apple\",\"sw\":768,\"imei\":\"12312312312312\"}}";
         if (log.isDebugEnabled()) {
             log.debug("received from ios: {}", data);
@@ -67,7 +69,11 @@ public class IOSController extends AppController {
             return RenderUtils.render(Constants.FAILED_CODE, "failed: bidder无返回数据或程序解析错误", Constants.EMPTY_STRING);
         }
 
-        String resp = bidderRespDispatcher.generateResp(ClientType.IOS, Operate.PULL, bidder2sspStr, null);
+        // 为了记录日志,传入ip
+        Map<String, Object> map = Maps.newHashMap();
+        map.put("ip", request.getRemoteHost());
+
+        String resp = bidderRespDispatcher.generateResp(ClientType.IOS, Operate.PULL, bidder2sspStr, map);
 
         return RenderUtils.render(Constants.SUCCESS_CODE, "success", resp);
     }

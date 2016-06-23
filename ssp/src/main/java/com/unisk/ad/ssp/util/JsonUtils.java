@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class JsonUtils {
 
-	private static Logger log = LoggerFactory.getLogger(JsonUtils.class);
+	private static Logger log = LoggerFactory.getLogger("ssp");
 	
 	private final static ObjectMapper objectMapper = new ObjectMapper();
 

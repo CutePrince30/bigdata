@@ -11,6 +11,7 @@
 			classpath:/mybatis/applicationContext-mybatis-adp.xml
 			classpath:/mybatis/applicationContext-mybatis-ssp.xml
 			classpath:/ehcache/applicationContext-ehcache.xml
+			classpath:/aop/aop.xml
 			classpath*:/applicationContext.xml
 			<!-- /WEB-INF/applicationContext*.xml -->
 		</param-value>

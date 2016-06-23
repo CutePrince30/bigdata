@@ -1,0 +1,100 @@
+package com.unisk.ad.ssp.aop;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.unisk.ad.ssp.model.Log;
+import com.unisk.ad.ssp.util.JsonUtils;
+import com.unisk.ad.ssp.util.LogUtils;
+import com.unisk.ad.ssp.util.UrlUtils;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+import java.util.Map;
+
+/**
+ * @author sunyunjie (jaysunyun_361@163.com)
+ */
+@Aspect
+public class LogAspect {
+
+    private static Logger logger = LoggerFactory.getLogger("syslog");
+
+    public static final String SSP_PULL = "ssp_pull";
+    public static final String SSP_SHOW = "ssp_show";
+    public static final String SSP_CLICK = "ssp_click";
+
+    public static final String SOURCE = "ssp";
+    public static final String VERSION = "1";
+
+    @AfterReturning("execution(* com.unisk.ad.ssp.controller.*.*Controller.show(..))")
+    public void afterShow(JoinPoint point) {
+        Object[] args = point.getArgs();
+        HttpServletRequest request = (HttpServletRequest) args[0];
+        final String ip = request.getRemoteHost();
+        final String adid = request.getParameter("adid");
+        final String pushid = request.getParameter("pushid");
+        final String mediaName = request.getParameter("appname");
+
+        new Thread() {
+            @Override
+            public void run() {
+                Log log = new Log(200, SSP_SHOW, VERSION, SOURCE, null, new Date(),
+                        null, adid, pushid, ip, null, null, null, mediaName);
+                String log_str = LogUtils.genarateLogLine(log);
+                logger.info(log_str);
+            }
+        }.start();
+    }
+
+    @AfterReturning("execution(* com.unisk.ad.ssp.controller.*.*Controller.click(..))")
+    public void afterClick(JoinPoint point) {
+        Object[] args = point.getArgs();
+        HttpServletRequest request = (HttpServletRequest) args[0];
+        final String ip = request.getRemoteHost();
+        final String adid = request.getParameter("adid");
+        final String pushid = request.getParameter("pushid");
+        final String mediaName = request.getParameter("appname");
+
+        new Thread() {
+            @Override
+            public void run() {
+                Log log = new Log(200, SSP_CLICK, VERSION, SOURCE, null, new Date(),
+                        null, adid, pushid, ip, null, null, null, mediaName);
+                String log_str = LogUtils.genarateLogLine(log);
+                logger.info(log_str);
+            }
+        }.start();
+    }
+
+    @Before("execution(* com.unisk.ad.ssp.dispatcher.BidderRespDispatcher.generateResp(..)")
+    public void afterPull(JoinPoint point) {
+        final Object[] args = point.getArgs();
+        new Thread() {
+            @Override
+            public void run() {
+                Map<String, Object> paramMap = (Map<String, Object>) args[3];
+                String ip = paramMap.get("ip") != null ? paramMap.get("ip").toString() : null;
+
+                String jsonStr = args[2].toString();
+                JsonNode jsonNode = JsonUtils.readTree(jsonStr);
+                String adid = JsonUtils.readValueAsText(jsonNode, "adid");
+                String wurl = JsonUtils.readValueAsText(jsonNode, "wurl");
+
+                Map<String, String> urlMap = UrlUtils.URLRequest(wurl);
+                String pushid = urlMap.get("pushid");
+                String mediaName = urlMap.get("appname");
+
+                Log log = new Log(200, LogAspect.SSP_PULL, LogAspect.VERSION, LogAspect.SOURCE, null, new Date(),
+                        null, adid, pushid, ip, null, null, null, mediaName);
+                String log_str = LogUtils.genarateLogLine(log);
+                logger.info(log_str);
+            }
+        }.start();
+    }
+
+}

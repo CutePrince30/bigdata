@@ -7,13 +7,10 @@ import com.unisk.ad.ssp.dispatcher.BidderRespDispatcher;
 import com.unisk.ad.ssp.integrator.BidderReqIntegrator;
 import com.unisk.ad.ssp.util.HttpUtils;
 import com.unisk.ad.ssp.util.JsonUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-
-import java.util.Map;
 
 /**
  * @author sunyunjie (jaysunyun_361@163.com)
@@ -21,7 +18,7 @@ import java.util.Map;
 @Controller
 public class AppController {
 
-    private static Logger log = LoggerFactory.getLogger(AppController.class);
+    private static Logger log = LoggerFactory.getLogger("ssp");
 
     @Autowired
     protected BidderReqIntegrator bidderReqIntegrator;

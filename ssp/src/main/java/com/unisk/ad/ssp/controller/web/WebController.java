@@ -23,13 +23,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @author sunyunjie (jaysunyun_361@163.com)
  */
 @Controller
 public class WebController {
 
-    private static Logger log = LoggerFactory.getLogger(WebController.class);
+    private static Logger log = LoggerFactory.getLogger("ssp");
 
     @Autowired
     private BidderReqIntegrator bidderReqIntegrator;
@@ -48,6 +50,7 @@ public class WebController {
     @RequestMapping(value = "/pull/info.js", method = RequestMethod.GET)
     @ResponseBody
     public String infoJS(
+            HttpServletRequest request,
             @RequestParam(value = "sn", required = true) String sn,
             @RequestParam(value = "slotid", required = true) String slotid,
             @RequestParam(value = "width_page", required = false) String width_page,
@@ -84,10 +87,23 @@ public class WebController {
 
         Map<String, Object> otherParaMap = Maps.newHashMap();
         otherParaMap.put("sn", sn);
+        otherParaMap.put("ip", request.getRemoteHost());
 
         String resp = bidderRespDispatcher.generateResp(ClientType.WEB, Operate.PULL, bidder2sspStr, otherParaMap);
 
         return resp;
+    }
+
+    @RequestMapping(value = "/show", method = RequestMethod.POST)
+    @ResponseBody
+    public String show(HttpServletRequest request, @RequestParam(value = "data", required = true) String data) {
+        return null;
+    }
+
+    @RequestMapping(value = "/click", method = RequestMethod.POST)
+    @ResponseBody
+    public String click(HttpServletRequest request, @RequestParam(value = "data", required = true) String data) {
+        return null;
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)

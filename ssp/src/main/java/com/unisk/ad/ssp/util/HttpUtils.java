@@ -43,7 +43,7 @@ import java.util.Map;
  */
 public class HttpUtils {
 
-	private static Logger log = LoggerFactory.getLogger(HttpUtils.class);
+	private static Logger log = LoggerFactory.getLogger("ssp");
 	
 	private static PoolingHttpClientConnectionManager connMgr;
 	private static RequestConfig requestConfig;

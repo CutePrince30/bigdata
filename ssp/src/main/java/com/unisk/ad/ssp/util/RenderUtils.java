@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
  */
 public class RenderUtils {
 
-    private static Logger log = LoggerFactory.getLogger(RenderUtils.class);
+    private static Logger log = LoggerFactory.getLogger("ssp");
 
     private static Template t = TemplateUtils.getTemplate("/template/response_template.beetl");;
 
