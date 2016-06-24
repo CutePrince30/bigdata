@@ -39,14 +39,17 @@ public class AndroidController extends AppController {
             log.debug("received from android: {}", data);
         }
 
-        String ssp2BidderParaStr = super.generateBidderPullReq(data);
+        String ssp2BidderParaStr = null;
+        try {
+            ssp2BidderParaStr = super.generateBidderPullReq(data);
+        }
+        catch (Exception e) {
+            return RenderUtils.render(Constants.FAILED_CODE, "failed: ssp向bidder请求参数有误, 错误信息: " + e.getMessage(),
+                    Constants.EMPTY_STRING);
+        }
 
         if (log.isDebugEnabled()) {
             log.debug("send to ssp2bidder: {}", ssp2BidderParaStr);
-        }
-
-        if (StringUtils.isEmpty(ssp2BidderParaStr)) {
-            return RenderUtils.render(Constants.FAILED_CODE, "failed: ssp向bidder请求参数有误", Constants.EMPTY_STRING);
         }
 
         // 请求bidder

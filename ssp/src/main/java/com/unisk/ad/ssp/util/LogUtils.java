@@ -11,7 +11,7 @@ import java.util.Date;
  */
 public class LogUtils {
 
-    public static final String LOG_SEPERATOR = "^A";
+    public static final String LOG_SEPERATOR = "";
 
     public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 

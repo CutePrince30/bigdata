@@ -57,14 +57,16 @@ public class WebController {
             @RequestParam(value = "width_screen", required = false) String width_screen)
             throws IOException {
 
-        String ssp2BidderParaStr = bidderReqIntegrator.generateBidderPullReq(MediaType.WEB, null, null, slotid, null);
+        String ssp2BidderParaStr = null;
+        try {
+            ssp2BidderParaStr = bidderReqIntegrator.generateBidderPullReq(MediaType.WEB, null, null, slotid, null);
+        } catch (Exception e) {
+            return RenderUtils.render(Constants.FAILED_CODE, "failed: ssp向bidder请求参数有误, 错误信息: " + e.getMessage(),
+                    Constants.EMPTY_STRING);
+        }
 
         if (log.isDebugEnabled()) {
             log.debug("send to bidder: {}", ssp2BidderParaStr);
-        }
-
-        if (StringUtils.isEmpty(ssp2BidderParaStr)) {
-            return RenderUtils.render(Constants.FAILED_CODE, "failed: ssp向bidder请求参数有误", Constants.EMPTY_STRING);
         }
 
         // 请求bidder

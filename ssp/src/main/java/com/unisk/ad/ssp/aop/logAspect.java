@@ -71,7 +71,7 @@ public class LogAspect {
         }.start();
     }
 
-    @Before("execution(* com.unisk.ad.ssp.dispatcher.BidderRespDispatcher.generateResp(..)")
+    @AfterReturning("execution(* com.unisk.ad.ssp.dispatcher.BidderRespDispatcher.generateResp(..))")
     public void afterPull(JoinPoint point) {
         final Object[] args = point.getArgs();
         new Thread() {
