@@ -3,6 +3,7 @@ package com.unisk.ad.ssp.controller.app;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.unisk.ad.ssp.config.Constants;
 import com.unisk.ad.ssp.config.MediaType;
+import com.unisk.ad.ssp.controller.CommonController;
 import com.unisk.ad.ssp.dispatcher.BidderRespDispatcher;
 import com.unisk.ad.ssp.integrator.BidderReqIntegrator;
 import com.unisk.ad.ssp.util.HttpUtils;
@@ -16,9 +17,7 @@ import org.springframework.stereotype.Controller;
  * @author sunyunjie (jaysunyun_361@163.com)
  */
 @Controller
-public class AppController {
-
-    private static Logger log = LoggerFactory.getLogger("ssp");
+public class AppController extends CommonController {
 
     @Autowired
     protected BidderReqIntegrator bidderReqIntegrator;
@@ -39,44 +38,6 @@ public class AppController {
         String device = dataNode.findPath("device").toString();
 
         return bidderReqIntegrator.generateBidderPullReq(MediaType.APP, appid, null, slotid, device);
-    }
-
-    protected void sendBidderShowAsyncReq(final String param) {
-        new Thread() {
-            @Override
-            public void run() {
-                if (log.isDebugEnabled()) {
-                    log.debug("send to ssp2bidder: {}", param);
-                }
-                // 请求bidder
-                String url = Constants.BIDDER_SHOWJS_URL + "?" + param;
-                try {
-                    HttpUtils.doGet(url);
-                }
-                catch (Exception e) {
-                    log.error("向bidder发送请求失败,请检查网络: {}", e);
-                }
-            }
-        }.start();
-    }
-
-    protected void sendBidderClickAsyncReq(final String param) {
-        new Thread() {
-            @Override
-            public void run() {
-                if (log.isDebugEnabled()) {
-                    log.debug("send to ssp2bidder: {}", param);
-                }
-                // 请求bidder
-                String url = Constants.BIDDER_CLICKJS_URL + "?" + param;
-                try {
-                    HttpUtils.doGet(url);
-                }
-                catch (Exception e) {
-                    log.error("向bidder发送请求失败,请检查网络: {}", e);
-                }
-            }
-        }.start();
     }
 
 }

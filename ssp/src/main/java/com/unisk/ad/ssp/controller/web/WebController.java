@@ -3,12 +3,14 @@ package com.unisk.ad.ssp.controller.web;
 import java.io.IOException;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Maps;
 import com.unisk.ad.ssp.config.ClientType;
 import com.unisk.ad.ssp.config.Constants;
 import com.unisk.ad.ssp.config.MediaType;
 import com.unisk.ad.ssp.config.Operate;
 
+import com.unisk.ad.ssp.controller.CommonController;
 import com.unisk.ad.ssp.dispatcher.BidderRespDispatcher;
 import com.unisk.ad.ssp.integrator.BidderReqIntegrator;
 import com.unisk.ad.ssp.util.*;
@@ -29,7 +31,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author sunyunjie (jaysunyun_361@163.com)
  */
 @Controller
-public class WebController {
+public class WebController extends CommonController {
 
     private static Logger log = LoggerFactory.getLogger("ssp");
 
@@ -43,7 +45,7 @@ public class WebController {
     @ResponseBody
     public String mainJS() throws IOException {
         Template template = TemplateUtils.getTemplate("/template/mainjs_template.beetl");
-        template.binding("host", Constants.SSP_IP);
+        template.binding("host", Constants.SSP_HOST);
         return template.render();
     }
 
@@ -53,13 +55,14 @@ public class WebController {
             HttpServletRequest request,
             @RequestParam(value = "sn", required = true) String sn,
             @RequestParam(value = "slotid", required = true) String slotid,
+            @RequestParam(value = "siteid", required = true) String siteid,
             @RequestParam(value = "width_page", required = false) String width_page,
             @RequestParam(value = "width_screen", required = false) String width_screen)
             throws IOException {
 
         String ssp2BidderParaStr = null;
         try {
-            ssp2BidderParaStr = bidderReqIntegrator.generateBidderPullReq(MediaType.WEB, null, null, slotid, null);
+            ssp2BidderParaStr = bidderReqIntegrator.generateBidderPullReq(MediaType.WEB, null, siteid, slotid, null);
         } catch (Exception e) {
             return RenderUtils.render(Constants.FAILED_CODE, "failed: ssp向bidder请求参数有误, 错误信息: " + e.getMessage(),
                     Constants.EMPTY_STRING);
@@ -96,16 +99,34 @@ public class WebController {
         return resp;
     }
 
-    @RequestMapping(value = "/show", method = RequestMethod.POST)
+    @RequestMapping(value = "/show", method = RequestMethod.GET)
     @ResponseBody
-    public String show(HttpServletRequest request, @RequestParam(value = "data", required = true) String data) {
-        return null;
+    public String show(HttpServletRequest request) {
+        String param = request.getQueryString();
+
+        super.sendBidderShowAsyncReq(param);
+
+        return RenderUtils.render(Constants.SUCCESS_CODE, "success", "{}");
     }
 
     @RequestMapping(value = "/click", method = RequestMethod.POST)
     @ResponseBody
     public String click(HttpServletRequest request, @RequestParam(value = "data", required = true) String data) {
-        return null;
+        String param = request.getQueryString();
+
+        if (log.isDebugEnabled()) {
+            log.debug("received from web: {}", data);
+        }
+
+        super.sendBidderClickAsyncReq(param);
+
+        //返回给客户端landing_page
+        JsonNode dataNode = JsonUtils.readTree(data);
+        String landing_page = JsonUtils.readValueAsText(dataNode, "landing_page");
+
+        String resp = bidderRespDispatcher.generateResp(ClientType.WEB, Operate.CLICK, landing_page, null);
+
+        return RenderUtils.render(Constants.SUCCESS_CODE, "success", resp);
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)

@@ -8,9 +8,6 @@ import java.util.Date;
  */
 public class Log {
 
-    // 状态码
-    private int code;
-
     // 操作名称
     private String name;
 
@@ -52,11 +49,10 @@ public class Log {
 
     }
 
-    public Log(int code, String name, String version, String source, String exchangeUserId,
+    public Log(String name, String version, String source, String exchangeUserId,
                Date time, String userId, String adId,
                String pushId, String ip, String region,
                String bidPrice, String costPrice, String mediaName) {
-        this.code = code;
         this.name = name;
         this.version = version;
         this.source = source;
@@ -70,14 +66,6 @@ public class Log {
         this.bidPrice = bidPrice;
         this.costPrice = costPrice;
         this.mediaName = mediaName;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
     }
 
     public String getName() {

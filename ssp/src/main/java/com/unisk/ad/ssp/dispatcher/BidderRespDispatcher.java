@@ -5,6 +5,7 @@ import com.unisk.ad.ssp.config.ClientType;
 import com.unisk.ad.ssp.config.Constants;
 import com.unisk.ad.ssp.config.Operate;
 import com.unisk.ad.ssp.dao.adp.AdpMapper;
+import com.unisk.ad.ssp.dao.ssp.SspMapper;
 import com.unisk.ad.ssp.model.InfoJsParam;
 import com.unisk.ad.ssp.model.Ssp2AppClickParam;
 import com.unisk.ad.ssp.model.Ssp2AppPullParam;
@@ -22,7 +23,7 @@ import java.util.Map;
 public class BidderRespDispatcher {
 
     @Autowired
-    private AdpMapper adpMapper;
+    private SspMapper sspMapper;
 
     public String generateResp(ClientType ct, Operate op, String respStr, Map<String, Object> otherParaMap) {
         String result = null;
@@ -41,15 +42,14 @@ public class BidderRespDispatcher {
     }
 
     public String generateWebResp(ClientType ct, Operate op, String respStr, Map<String, Object> otherParaMap) {
-        String result = null;
+        Object obj = null;
+        Template ssp2WebTemplate = null;
+
         switch (op) {
             case PULL:
                 // 解析bidder返回的数据
                 JsonNode node = JsonUtils.readTree(respStr);
                 String adid = JsonUtils.readValueAsText(node, "adid");
-                String width = JsonUtils.readValueAsText(node, "adw");
-                String height = JsonUtils.readValueAsText(node, "adh");
-                String landingPage = JsonUtils.readValueAsText(node, "adurl");
                 final String wurl = JsonUtils.readValueAsText(node, "wurl");
 
                 // 返回bidder请求结果
@@ -58,35 +58,39 @@ public class BidderRespDispatcher {
                         HttpUtils.doGet(wurl);
                     }
                 }.start();
+                String param = UrlUtils.TruncateUrlPage(wurl);
+                String showJs = getShowUrl(ct) + "?" + param;
+                String clickJs = getClickUrl(ct) + "?" + param;
 
                 // 根据bidder返回数据的adid查库
-                InfoJsParam infoJsPara1 = adpMapper.selectOneByAdidFromAd(adid);
-                InfoJsParam infoJsPara2 = adpMapper.selectOneByAdidFromStuff(adid);
-
-                if (infoJsPara1 != null) {
-                    // 将结果放入一个InfoJsParameter对象中
-                    BeanUtils.merge(infoJsPara1, infoJsPara2);
+                InfoJsParam infoJsPara = sspMapper.selectAdInfoByStuffId(adid);
+                if (infoJsPara == null) {
+                    return RenderUtils.render(Constants.FAILED_CODE, "无广告数据, adid: " + adid, "{}");
                 }
-                infoJsPara2.setSn(otherParaMap.get("sn").toString());
-                infoJsPara2.setClickJs(Constants.CLICK_JS);
-                infoJsPara2.setShowJs(Constants.SHOW_JS);
-                infoJsPara2.setHeight(height);
-                infoJsPara2.setWidth(width);
-                infoJsPara2.setLandingPage(landingPage);
 
-                // 生成对应json文件
-                Template infoJsTemplate = TemplateUtils.getTemplate("/template/infojs_template.beetl");
-                infoJsTemplate.binding("obj", infoJsPara2);
-                result = infoJsTemplate.render();
+                infoJsPara.setSn(otherParaMap.get("sn").toString());
+                infoJsPara.setClickJs(clickJs);
+                infoJsPara.setShowJs(showJs);
+                infoJsPara.setAdType("1");
+                infoJsPara.setHasText("0");
+                infoJsPara.setSrc("1");
+                infoJsPara.setViewType("1");
+                infoJsPara.setType("AD_IMAGE");
+
+                obj = infoJsPara;
+                ssp2WebTemplate = TemplateUtils.getTemplate("/template/infojs_template.beetl");
                 break;
             case SHOW:
                 break;
             case CLICK:
-                break;
+                obj = new Ssp2AppClickParam(respStr);
+                ssp2WebTemplate = TemplateUtils.getTemplate("/template/ssp2app_click_template.beetl");
             case CREATE:
                 break;
         }
-        return result;
+        ssp2WebTemplate.binding("obj", obj);
+
+        return ssp2WebTemplate.render();
     }
 
     public String generateAppResp(ClientType ct, Operate op, String respStr, Map<String, Object> otherParaMap) {

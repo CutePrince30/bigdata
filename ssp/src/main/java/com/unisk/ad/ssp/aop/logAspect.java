@@ -31,8 +31,8 @@ public class LogAspect {
     public static final String SOURCE = "ssp";
     public static final String VERSION = "1";
 
-    @AfterReturning("execution(* com.unisk.ad.ssp.controller.*.*Controller.show(..))")
-    public void afterShow(JoinPoint point) {
+    @AfterReturning("execution(* com.unisk.ad.ssp.controller.app.*Controller.show(..))")
+    public void afterAppShow(JoinPoint point) {
         Object[] args = point.getArgs();
         HttpServletRequest request = (HttpServletRequest) args[0];
         final String ip = request.getRemoteHost();
@@ -43,7 +43,7 @@ public class LogAspect {
         new Thread() {
             @Override
             public void run() {
-                Log log = new Log(200, SSP_SHOW, VERSION, SOURCE, null, new Date(),
+                Log log = new Log(SSP_SHOW, VERSION, SOURCE, null, new Date(),
                         null, adid, pushid, ip, null, null, null, mediaName);
                 String log_str = LogUtils.genarateLogLine(log);
                 logger.info(log_str);
@@ -51,8 +51,28 @@ public class LogAspect {
         }.start();
     }
 
-    @AfterReturning("execution(* com.unisk.ad.ssp.controller.*.*Controller.click(..))")
-    public void afterClick(JoinPoint point) {
+    @AfterReturning("execution(* com.unisk.ad.ssp.controller.web.*Controller.show(..))")
+    public void afterWebShow(JoinPoint point) {
+        Object[] args = point.getArgs();
+        HttpServletRequest request = (HttpServletRequest) args[0];
+        final String ip = request.getRemoteHost();
+        final String adid = request.getParameter("adid");
+        final String pushid = request.getParameter("pushid");
+        final String mediaName = request.getParameter("site_name");
+
+        new Thread() {
+            @Override
+            public void run() {
+                Log log = new Log(SSP_SHOW, VERSION, SOURCE, null, new Date(),
+                        null, adid, pushid, ip, null, null, null, mediaName);
+                String log_str = LogUtils.genarateLogLine(log);
+                logger.info(log_str);
+            }
+        }.start();
+    }
+
+    @AfterReturning("execution(* com.unisk.ad.ssp.controller.app.*Controller.click(..))")
+    public void afterAppClick(JoinPoint point) {
         Object[] args = point.getArgs();
         HttpServletRequest request = (HttpServletRequest) args[0];
         final String ip = request.getRemoteHost();
@@ -63,7 +83,27 @@ public class LogAspect {
         new Thread() {
             @Override
             public void run() {
-                Log log = new Log(200, SSP_CLICK, VERSION, SOURCE, null, new Date(),
+                Log log = new Log(SSP_CLICK, VERSION, SOURCE, null, new Date(),
+                        null, adid, pushid, ip, null, null, null, mediaName);
+                String log_str = LogUtils.genarateLogLine(log);
+                logger.info(log_str);
+            }
+        }.start();
+    }
+
+    @AfterReturning("execution(* com.unisk.ad.ssp.controller.web.*Controller.click(..))")
+    public void afterWebClick(JoinPoint point) {
+        Object[] args = point.getArgs();
+        HttpServletRequest request = (HttpServletRequest) args[0];
+        final String ip = request.getRemoteHost();
+        final String adid = request.getParameter("adid");
+        final String pushid = request.getParameter("pushid");
+        final String mediaName = request.getParameter("site_name");
+
+        new Thread() {
+            @Override
+            public void run() {
+                Log log = new Log(SSP_CLICK, VERSION, SOURCE, null, new Date(),
                         null, adid, pushid, ip, null, null, null, mediaName);
                 String log_str = LogUtils.genarateLogLine(log);
                 logger.info(log_str);
@@ -89,7 +129,7 @@ public class LogAspect {
                 String pushid = urlMap.get("pushid");
                 String mediaName = urlMap.get("appname");
 
-                Log log = new Log(200, LogAspect.SSP_PULL, LogAspect.VERSION, LogAspect.SOURCE, null, new Date(),
+                Log log = new Log(LogAspect.SSP_PULL, LogAspect.VERSION, LogAspect.SOURCE, null, new Date(),
                         null, adid, pushid, ip, null, null, null, mediaName);
                 String log_str = LogUtils.genarateLogLine(log);
                 logger.info(log_str);

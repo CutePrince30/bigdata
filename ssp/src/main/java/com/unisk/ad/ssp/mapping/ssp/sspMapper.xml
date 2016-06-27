@@ -3,14 +3,50 @@
 
 <mapper namespace="com.unisk.ad.ssp.dao.ssp.SspMapper">
 	
-	<resultMap id="ssp2BidderMapper" type="com.unisk.ad.ssp.model.Ssp2BidderPullParam">
-        <result column="slot_id" property="slotid" jdbcType="INTEGER" />
+	<resultMap id="zoneInfo" type="com.unisk.ad.ssp.model.Ssp2BidderPullParam">
+        <result column="zone_id" property="slotid" jdbcType="INTEGER" />
+		<result column="zone_type" property="instl" jdbcType="INTEGER" />
 		<result column="width" property="width" jdbcType="INTEGER" />
 		<result column="height" property="height" jdbcType="INTEGER" />
 	</resultMap>
 
-	<select id="selectOneBySlotId" parameterType="java.lang.String" resultMap="ssp2BidderMapper">
-		select * from ssp_slot where slot_id=#{slotId,jdbcType=VARCHAR}	
+	<resultMap id="appInfo" type="com.unisk.ad.ssp.model.Ssp2BidderPullParam">
+		<result column="media_id" property="appid" jdbcType="INTEGER" />
+		<result column="media_name" property="appName" jdbcType="VARCHAR" />
+		<result column="url" property="storeUrl" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="siteInfo" type="com.unisk.ad.ssp.model.Ssp2BidderPullParam">
+		<result column="media_id" property="siteid" jdbcType="INTEGER" />
+		<result column="media_name" property="siteName" jdbcType="VARCHAR" />
+		<result column="url" property="sitePage" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap id="adInfo" type="com.unisk.ad.ssp.model.InfoJsParam">
+		<result column="stuff_id" property="adid" jdbcType="INTEGER" />
+		<result column="stuff_name" property="spid" jdbcType="VARCHAR" />
+		<result column="width" property="width" jdbcType="INTEGER" />
+		<result column="height" property="height" jdbcType="INTEGER" />
+		<result column="show_js" property="thirdShowJs" jdbcType="VARCHAR" />
+		<result column="click_js" property="thirdClickJs" jdbcType="VARCHAR" />
+		<result column="addr" property="addr" jdbcType="VARCHAR" />
+		<result column="text" property="text" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="selectOneByZoneId" parameterType="java.lang.String" resultMap="zoneInfo">
+		select * from ssp_zones where zone_id=#{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectAppInfoByMediaId" parameterType="java.lang.String" resultMap="appInfo">
+		select * from ssp_media where media_id=#{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectSiteInfoByMediaId" parameterType="java.lang.String" resultMap="siteInfo">
+		select * from ssp_media where media_id=#{id,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectAdInfoByStuffId" parameterType="java.lang.String" resultMap="adInfo">
+		select * from ssp_stuffs where stuff_id=#{id,jdbcType=VARCHAR}
 	</select>
 
 </mapper>

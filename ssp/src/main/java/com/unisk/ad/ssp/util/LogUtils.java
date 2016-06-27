@@ -18,8 +18,7 @@ public class LogUtils {
     public static String genarateLogLine(Log log) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(log.getCode());
-        sb.append(LOG_SEPERATOR);
+        sb.append(" ");
         sb.append(defaultIfEmpty(log.getName()));
         sb.append(LOG_SEPERATOR);
         sb.append(defaultIfEmpty(log.getVersion()));
@@ -51,18 +50,6 @@ public class LogUtils {
 
     private static String defaultIfEmpty(String str) {
         return StringUtils.defaultIfEmpty(str, "");
-    }
-
-    public static void main(String[] args) {
-        Log log = new Log();
-        log.setAdId("123123123");
-        log.setCode(200);
-        log.setIp("127.0.0.1");
-        log.setName("rtb_show");
-        log.setUserId("107986961782312");
-        log.setVersion("2312312");
-        log.setTime(new Date());
-        System.out.println(genarateLogLine(log));
     }
 
 }

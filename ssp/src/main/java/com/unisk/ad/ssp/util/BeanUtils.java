@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 
 /**
- * Created by sunyunjie on 6/2/16.
+ * @author sunyunjie (jaysunyun_361@163.com)
  */
 public class BeanUtils {
 

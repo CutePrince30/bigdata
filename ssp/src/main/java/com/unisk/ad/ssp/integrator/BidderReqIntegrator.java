@@ -3,11 +3,13 @@ package com.unisk.ad.ssp.integrator;
 import com.unisk.ad.ssp.config.MediaType;
 import com.unisk.ad.ssp.dao.ssp.SspMapper;
 import com.unisk.ad.ssp.model.Ssp2BidderPullParam;
+import com.unisk.ad.ssp.util.BeanUtils;
 import com.unisk.ad.ssp.util.TemplateUtils;
 import com.unisk.ad.ssp.util.UUIDGenerator;
 import org.apache.commons.lang3.StringUtils;
 import org.beetl.core.Template;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -21,30 +23,27 @@ public class BidderReqIntegrator {
     @Autowired
     protected SspMapper sspMapper;
 
-    public String generateBidderPullReq(MediaType mt, String appid, String siteid, String slotid, String device) {
-        // 必须要有广告位id
-        Ssp2BidderPullParam ssp2BidderParameter = sspMapper.selectOneBySlotId(slotid);
-        if (ssp2BidderParameter == null) {
-            return "failed: 无广告位信息";
+    public String generateBidderPullReq(MediaType mt, String appid, String siteid, String zoneid, String device) {
+        // 推广位信息
+        Ssp2BidderPullParam zoneInfo = sspMapper.selectOneByZoneId(zoneid);
+        // 渠道信息
+        Ssp2BidderPullParam mediaInfo;
+
+        if (mt.equals(MediaType.WEB)) {
+            // 网站信息
+            mediaInfo = sspMapper.selectSiteInfoByMediaId(siteid);
+        }
+        else {
+            // app信息
+            mediaInfo = sspMapper.selectAppInfoByMediaId(appid);
         }
 
-        // TODO: 通过appid查找对应的数据
-        if (StringUtils.isNotEmpty(appid)) {
-            ssp2BidderParameter.setAppid(appid);
-        }
-
-        // TODO: 通过siteid查找对应数据
-        if (StringUtils.isNotEmpty(siteid)) {
-            ssp2BidderParameter.setSiteid(siteid);
-            //ssp2BidderParameter.setSiteXXX();
-        }
+        Ssp2BidderPullParam ssp2BidderParameter = new Ssp2BidderPullParam();
+        BeanUtils.merge(zoneInfo, ssp2BidderParameter);
+        BeanUtils.merge(mediaInfo, ssp2BidderParameter);
 
         ssp2BidderParameter.setMediaType(mt.getFlag());
-
-        // TODO: 怎么取instl
-        ssp2BidderParameter.setInstl("0");
         ssp2BidderParameter.setReqid(UUIDGenerator.generate());
-
         ssp2BidderParameter.setDevice(device);
 
         Template ssp2BidderTemplate = TemplateUtils.getTemplate("/template/ssp2bidder_pull_template.beetl");

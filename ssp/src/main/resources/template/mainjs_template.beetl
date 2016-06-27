@@ -1,11 +1,6 @@
 (function(win, headVar) {
-
-	var ua = window.navigator.userAgent;
-
-	var bo = document.getElementsByTagName('body')[0];
-	var bfir = bo.firstChild;
-
 	var clientW = document.body.clientWidth;
+	var wid = clientW;
 	var doc = win.document,
 		domWaiters = [],
 		queue = [],
@@ -24,7 +19,7 @@
 	api._redirect = "${host}";
 	api._ads = "${host}";
 	api._cms = "${host}";
-	api._third_req = "";
+	api._third_req = "http://121.40.134.209:8221/ck.gif";
 	api._log_flag = "1";
 	if (isAsync) {
 		api.load = function() {
@@ -404,7 +399,7 @@
 				url: document.location.href
 			};
 			api.log(log);
-		//	if (typeof _js2 != "undefined" && _js2 != "undefined" && _js2 != "") {
+			if (typeof _js2 != "undefined" && _js2 != "undefined" && _js2 != "") {
 				_js2 = unescape(_js2);
 				var iframe = document.createElement("IFRAME");
 				iframe.frameBorder = "0";
@@ -413,7 +408,7 @@
 				iframe.style.height = 0 + "px";
 				iframe.style.boder = 0 + "px";
 				document.body.appendChild(iframe)
-		//	}
+			}
 		})
 	};
 	api.click_js = function(_js, _js2, _sn, aid) {
@@ -477,7 +472,46 @@
 				api.log(log)
 			} else {
 				var wrap = "";
-				
+				switch (parseInt(ad.data.view_type)) {
+					case 2:
+						api.isMobile() ? wrap = api.genInsertScreenWrapper(ad, ad.data.staff[0]) : wrap = api.genFuChuangWrapper(ad, ad.data.staff[0]);
+						break;
+					case 32:
+						wrap = api.genDitongWrapper(ad, ad.data.staff[0]);
+						break;
+					case 4:
+						if (ad.data.staff[0].type == 1 || ad.data.staff[0].type == "AD_IMAGE" || ad.data.staff[0].type == 2 || ad.data.staff[0].type == "AD_FLASH") {
+							api.renderBgAd(ad, ad.data.staff[0]);
+							return
+						}
+						break;
+					case 8:
+						if (ad.data.staff[0].type == 1 || ad.data.staff[0].type == "AD_IMAGE" || ad.data.staff[0].type == 2 || ad.data.staff[0].type == "AD_FLASH") {
+							api.renderDirect(ad, ad.data.staff[0]);
+							return
+						}
+						break;
+					case 64:
+						api.renderMobileApp(ad, ad.data.staff[0]);
+						return;
+						break;
+					case 128:
+						api.renderMobileView(ad, ad.data.staff[0]);
+						return;
+						break;
+					case 256:
+						api.isMobile() ? wrap = api.genAppTopBarWrapper(ad, ad.data.staff[0]) : wrap = api.genFuChuangWrapper(ad, ad.data.staff[0]);
+						break;
+					case 512:
+						wrap = api.genInsertScreenWrapper(ad, ad.data.staff[0]);
+						break;
+					case 1024:
+						api.isMobile() ? wrap = api.genAppBottomBarWrapper(ad, ad.data.staff[0]) : wrap = api.genFuChuangWrapper(ad, ad.data.staff[0]);
+						break;
+					default:
+						api.isMobile() ? wrap = api.genInsertScreenWrapper(ad, ad.data.staff[0]) : wrap = api.genNormal(ad, ad.data.staff[0]);
+						break
+				}
 				if (ad.data.staff[0].type == 1 || ad.data.staff[0].type == "AD_IMAGE") {
 					this.renderPic(ad, ad.data.staff[0], wrap)
 				} else {
@@ -523,19 +557,233 @@
 			api.log(log)
 		}
 	};
+	api.genFuChuangWrapper = function(ad, staff) {
 
+		var wrap = document.createElement("div");
+		wrap.id = ad.sn + "_wrap";
+		wrap.style.position = "fixed";
+		wrap.style._position = "absolute";
+		wrap.style.right = "0px";
+		wrap.style.bottom = "0px";
+		wrap.style._bottom = "0px";
+		wrap.style._top = "expression(eval(document.documentElement.scrollTop+document.documentElement.clientHeight- this.offsetHeight-(parseInt(this.currentStyle.marginBottom,10)||15)));";
+		wrap.style.zIndex = "9999";
+		if (staff.width > 1 || staff.height > 1) {
+			var c = "<span onclick=\"javascript:document.getElementById('" + wrap.id + '\').style.display=\'none\'" title="å…³é—­" style="position: absolute;color: #5a5a5a;cursor: pointer;font-family: &quot;simsun&quot;font-size: 14px;">å…³é—­</span>';
+			var c = "<span onclick=\"javascript:document.getElementById('" + wrap.id + '\').style.display=\'none\'" title="å…³é—­" style="position: absolute;color: #5a5a5a;cursor: pointer;font-family: &quot;simsun&quot;font-size: 14px;"><img src="http://' + api._js + '/assets_admin/img/closeX.png" width="24"></span>'
+		} else {
+			var c = "<span>å…³é—­</span>"
+		}
+		var c_content = document.createElement("div");
+		c_content.style.position = "absolute";
+		c_content.style.right = "0px";
+		c_content.style.top = "0px";
+		c_content.style.marginRight = "24px";
+		c_content.innerHTML = c;
+		var wrap_content = document.createElement("div");
+		wrap_content.id = ad.sn + "_content";
+		wrap_content.style.position = "relative";
+		if(clientW > staff.width) {
+			wid = staff.width;
+		}
+		wrap_content.style.width = wid + "px";
+		// wrap_content.style.height = staff.height + "px";
+		wrap_content.appendChild(c_content);
+		wrap.appendChild(wrap_content);
+		return wrap
+	};
+	api.genDitongWrapper = function(ad, staff) {
+/*		if((staff.height * (wid / staff.width)) > (document.documentElement.clientHeight / 4)){
+			staff.height = document.documentElement.clientHeight / 4;
+		}
+*/
+		var wrap = document.createElement("div");
+		wrap.style.left = ((document.documentElement.clientWidth - staff.width) / 2 > 0 ? (document.documentElement.clientWidth - staff.width) / 2 : 0) + "px";
+		wrap.id = ad.sn + "_wrap";
+		wrap.style.position = "fixed";
+		wrap.style._position = "absolute";
+		wrap.style.bottom = "0px";
+		if(clientW > staff.width) {
+			wid = staff.width;
+		}
+		wrap.style.width = wid + 'px';
+
+		wrap.style._bottom = "0px";
+		wrap.style._top = "expression(eval(document.documentElement.scrollTop+document.documentElement.clientHeight- this.offsetHeight-(parseInt(this.currentStyle.marginBottom,10)||0)));";
+		wrap.style.zIndex = "9999";
+		wrap.style.textAlign = "center";
+		var c_content = document.createElement("div");
+		if (api.isMobile()) {
+			if (staff.width > 1 || staff.height > 1) {
+				wrap.style.background = "#000";
+				wrap.style.textAlign = "right";
+
+				var c = "<div onclick=\"javascript:document.getElementById('" + wrap.id + "').style.display='none'\" style=\"width:48px;height:" + staff.height + 'px;display:table-cell;vertical-align:middle;"><img src="http://' + api._js + '/assets_admin/img/closeX.png" width="48"></div>'
+			} else {
+				var c = "<div></div>"
+			}
+		} else {
+			if (staff.width > 1 || staff.height > 1) {
+				var c = "<span onclick=\"javascript:document.getElementById('" + wrap.id + '\').style.display=\'none\'" title="å…³é—­" style="position: absolute;color:red;cursor: pointer;font-family: &quot;simsun&quot;font-size: 16px;"><img src="http://' + api._js + '/assets_admin/img/closeX.png" width="24"></span>'
+			} else {
+				var c = "<span></span>"
+			}
+			c_content.style.marginRight = "32px"
+		}
+		c_content.style.position = "absolute";
+		c_content.style.right = "0px";
+		c_content.style.top = "0px";
+		c_content.innerHTML = c;
+		var wrap_content = document.createElement("div");
+		wrap_content.id = ad.sn + "_content";
+		wrap_content.style.position = "relative";
+		wrap_content.style.minHeight = "48px";
+		if (api.isMobile()) {
+
+			wrap_content.style.width = wid + 'px';
+			// wrap_content.style.height = staff.height + "px";
+			// wrap_content.style.width = "100%"
+		} else {
+			if(clientW > staff.width) {
+				wid = staff.width;
+			}
+			wrap_content.style.width = wid + "px";
+			// wrap_content.style.height = staff.height + "px";
+			wrap_content.style.margin = "auto"
+		}
+		wrap_content.appendChild(c_content);
+		wrap.appendChild(wrap_content);
+		return wrap
+	};
 	api.genNormal = function(ad, staff) {
 		var wrap = document.createElement("div");
 		wrap.id = ad.sn + "_wrap";
 		var wrap_content = document.createElement("div");
 		wrap_content.id = ad.sn + "_content";
-
-		wrap_content.style.width = "100%";
+		if(clientW > staff.width) {
+			wid = staff.width;
+		}
+		wrap_content.style.width = wid + "px";
 		// wrap_content.style.height = staff.height + "px";
 		wrap.appendChild(wrap_content);
 		return wrap
 	};
+	api.genInsertScreenWrapper = function(ad, staff) {
+		var wrap = document.createElement("div");
+		wrap.id = ad.sn + "_wrap";
+		wrap.style.position = "fixed";
+		wrap.style._position = "absolute";
+		wrap.style.boxShadow = "0 3px 9px rgba(0,0,0,.5)";
+		wrap.style.left = ((document.documentElement.clientWidth - staff.width) / 2 > 0 ? (document.documentElement.clientWidth - staff.width) / 2 : 0) + "px";
+		wrap.style.top = ((document.documentElement.clientHeight - staff.height) / 2 > 0 ? (document.documentElement.clientHeight - staff.height) / 2 : 0) + "px";
+		wrap.style._top = "expression(eval((( document.documentElement.clientWidth - staff.height ) / 2 > 0 ? (document.documentElement.clientHeight  - staff.height) / 2 : 0 ))));";
+		wrap.style.zIndex = "99";
+		if (staff.width > 1 || staff.height > 1) {
+			var c = "<span onclick=\"javascript:document.getElementById('" + wrap.id + '\').style.display=\'none\'" title="close" style="position: absolute;color: #5a5a5a;cursor: pointer;font-family: &quot;simsun&quot;font-size: 14px;">å…³é—­</span>';
+			var c = "<span onclick=\"javascript:document.getElementById('" + wrap.id + '\').style.display=\'none\'" title="close" style="position: absolute;color: #5a5a5a;cursor: pointer;font-family: &quot;simsun&quot;font-size: 14px;"><img src="http://' + api._js + '/assets_admin/img/closeX.png" width="24"></span>'
+		} else {
+			var c = "<span>å…³é—­</span>"
+		}
+		var c_content = document.createElement("div");
+		c_content.style.position = "absolute";
+		c_content.style.right = "0px";
+		c_content.style.top = "0px";
+		c_content.style.marginRight = "24px";
+		c_content.innerHTML = c;
+		var wrap_content = document.createElement("div");
+		wrap_content.id = ad.sn + "_content";
+		wrap_content.style.position = "relative";
+		if(clientW > staff.width) {
+			wid = staff.width;
+		}
+		wrap_content.style.width = wid + "px";
+		// wrap_content.style.height = staff.height + "px";
+		wrap_content.appendChild(c_content);
+		wrap.appendChild(wrap_content);
+		setTimeout(function() {
+			wrap.style.display = "none"
+		}, 5000);
+		return wrap
+	};
+	api.genAppTopBarWrapper = function(ad, staff) {
+		var placeholder = document.createElement("div");
+		placeholder.id = ad.sn + "_placeholder";
+		placeholder.style.clear = "both";
+		placeholder.style.width = document.documentElement.clientWidth + "px";
+		// placeholder.style.height = staff.height;
+		document.body.insertBefore(placeholder, document.body.firstChild);
+		var wrap = document.createElement("div");
+		wrap.id = ad.sn + "_wrap";
+		wrap.style.position = "fixed";
+		wrap.style._position = "absolute";
+		// wrap.style.left = "0px";
+		wrap.style.left = ((document.documentElement.clientWidth - staff.width) / 2 > 0 ? (document.documentElement.clientWidth - staff.width) / 2 : 0) + "px";
+		wrap.style.width = staff.width + 'px';
+		wrap.style.top = "0px";
+		wrap.style.zIndex = "99";
+		wrap.style.boxShadow = "0 3px 9px rgba(0,0,0,.5)";
+		// var c = "";
 
+		var c_content = document.createElement("div");
+
+		if (api.isMobile()) {
+			if (staff.width > 1 || staff.height > 1) {
+				wrap.style.background = "#000";
+				wrap.style.textAlign = "right";
+
+				var c = "<div onclick=\"javascript:document.getElementById('" + wrap.id + "').style.display='none'\" style=\"width:48px;height:" + staff.height + 'px;display:table-cell;vertical-align:middle;"><img src="http://' + api._js + '/assets_admin/img/closeX.png" width="48"></div>'
+			} else {
+				var c = "<div></div>"
+			}
+		} else {
+			if (staff.width > 1 || staff.height > 1) {
+				var c = "<span onclick=\"javascript:document.getElementById('" + wrap.id + '\').style.display=\'none\'" title="å…³é—­" style="position: absolute;color:red;cursor: pointer;font-family: &quot;simsun&quot;font-size: 16px;"><img src="http://' + api._js + '/assets_admin/img/closeX.png" width="24"></span>'
+			} else {
+				var c = "<span></span>"
+			}
+			c_content.style.marginRight = "32px"
+		}
+
+		c_content.style.position = "absolute";
+		c_content.style.right = "0px";
+		c_content.style.top = "0px";
+		c_content.innerHTML = c;
+		var wrap_content = document.createElement("div");
+		wrap_content.id = ad.sn + "_content";
+		wrap_content.style.position = "relative";
+		wrap_content.style.width = document.documentElement.clientWidth + "px";
+		// wrap_content.style.height = staff.height + "px";
+		wrap_content.appendChild(c_content);
+		wrap.appendChild(wrap_content);
+		return wrap
+	};
+	api.genAppBottomBarWrapper = function(ad, staff) {
+		var wrap = document.createElement("div");
+		wrap.id = ad.sn + "_wrap";
+		wrap.style.position = "fixed";
+		wrap.style._position = "absolute";
+		// wrap.style.left = "0px";
+		wrap.style.left = ((document.documentElement.clientWidth - staff.width) / 2 > 0 ? (document.documentElement.clientWidth - staff.width) / 2 : 0) + "px";
+		wrap.style.zIndex = "99";
+		wrap.style.bottom = "0px";
+		wrap.style._bottom = "0px";
+		wrap.style._top = "expression(eval(document.documentElement.scrollTop+document.documentElement.clientHeight- this.offsetHeight-(parseInt(this.currentStyle.marginBottom,10)||15)));";
+		wrap.style.boxShadow = "0 3px 9px rgba(0,0,0,.5)";
+		var c = "";
+		var c_content = document.createElement("div");
+		c_content.style.position = "absolute";
+		c_content.style.right = "0px";
+		c_content.style.top = "0px";
+		c_content.innerHTML = c;
+		var wrap_content = document.createElement("div");
+		wrap_content.id = ad.sn + "_content";
+		wrap_content.style.position = "relative";
+		wrap_content.style.width = document.documentElement.clientWidth + "px";
+		// wrap_content.style.height = staff.height + "px";
+		wrap_content.appendChild(c_content);
+		wrap.appendChild(wrap_content);
+		return wrap
+	};
 	api.renderMobileView = function(ad, staff) {
 		var para = "?";
 		if (typeof ad.data.aid != "undefined") {
@@ -557,8 +805,8 @@
 		var show_js = ad.data.show_js + para;
 		wrap = api.genNormal(ad, staff);
 		var p = document.createElement("div");
-		var c = '<div style="float:right;position:absolute;top:0px;right:0px"><div onclick="javascript:document.getElementById(\'' + wrap.id + "').style.display='none'\" style=\"width:48px;"  + ';"><img src="http://' + api._js + '/assets_admin/img/closeX.png" width="48"></div></div>';
-		var html = '<div style="	width:100%;  overflow :hidden; position:fixed; left:0px; top:0px;z-index:998;"> <div style=" right:0px; bottom:0px; position:absolute;z-index:999;">' + c + '<img style="width:' + staff.width + "px;" + 'px;" onclick="BCMain.renderMobileViewIframe(\'' + ad.sn + "','" + staff.landing_page + "');BCMain.click_js('" + click_js + "','" + escape(ad.data.third_click_js) + "','" + ad.sn + "','" + ad.data.aid + '\');" src="' + staff.addr + '" /></div> <iframe style="transition:width 0.5s; -moz-transition:width  0.5s; -webkit-transition:width  0.5s; -o-transition:width  0.5s; position:fixed;right:0px;" id="' + ad.sn + '_i" width="0" height="0" src="" border="0" scroll="no" ></iframe></div> ';
+		var c = '<div style="float:right;position:absolute;top:0px;right:0px"><div onclick="javascript:document.getElementById(\'' + wrap.id + "').style.display='none'\" style=\"width:48px;height:" + staff.height + 'px;"><img src="http://' + api._js + '/assets_admin/img/closeX.png" width="48"></div></div>';
+		var html = '<div style="	width:100%; height:100%; overflow :hidden; position:fixed; left:0px; top:0px;z-index:998;"> <div style=" right:0px; bottom:0px; position:absolute;z-index:999;">' + c + '<img style="width:' + staff.width + "px;height:" + staff.height + 'px;" onclick="BCMain.renderMobileViewIframe(\'' + ad.sn + "','" + staff.landing_page + "');BCMain.click_js('" + click_js + "','" + escape(ad.data.third_click_js) + "','" + ad.sn + "','" + ad.data.aid + '\');" src="' + staff.addr + '" /></div> <iframe style="transition:width 0.5s; -moz-transition:width  0.5s; -webkit-transition:width  0.5s; -o-transition:width  0.5s; position:fixed;right:0px;" id="' + ad.sn + '_i" width="0" height="0" src="" border="0" scroll="no" ></iframe></div> ';
 		p.innerHTML = html;
 		wrap.childNodes[0].appendChild(p);
 		var d = document.getElementById(ad.sn);
@@ -574,8 +822,10 @@
 			};
 			api.log(log)
 		} else {
-			// d.parentNode.insertBefore(wrap, d)
-			bo.insertBefore(wrap,bfir);
+			d.parentNode.insertBefore(wrap, d)
+			/*var ht = document.getElementsByTagName('html');
+			var bo = document.getElementsByTagName('bo');
+			ht[0].insertBefore(d,bo[0]);*/
 		}
 		api.show_js(show_js, escape(ad.data.third_show_js), ad.sn, ad.data.aid);
 		var log = {
@@ -598,7 +848,7 @@
 		var width = iframe.getAttribute("width");
 		if (width == 0) {
 			iframe.width = "100%";
-			// iframe.height = "100%"
+			iframe.height = "100%"
 		} else {
 			iframe.width = "0";
 			iframe.height = "0"
@@ -625,9 +875,10 @@
 		var show_js = ad.data.show_js + para;
 		api.load("http://cdn.tanx.com/t/tanxmobile/mraid.js", function() {
 			var img = document.createElement("img");
-
-			img.style.width = '100%';
-			img.style.display = 'block';
+			if(clientW > staff.width) {
+				wid = staff.width;
+			}
+			img.style.width = wid + "px";
 			// img.style.height = staff.height + "px";
 			img.onload = function() {
 				mraid.show();
@@ -642,7 +893,7 @@
 				};
 				api.log(log)
 			};
-			
+			img.src = staff.addr;
 			img.onclick = function() {
 				mraid.open(staff.loading_page);
 				api.click_js(click_js, escape(ad.data.third_click_js), ad.sn, ad.data.aid);
@@ -663,8 +914,7 @@
 				};
 				api.log(log)
 			} else {
-				// d.parentNode.insertBefore(wrap, d)
-				bo.insertBefore(wrap,bfir);
+				d.parentNode.insertBefore(wrap, d)
 			}
 		})
 	};
@@ -737,8 +987,10 @@
 	api.renderPic = function(ad, staff, wrap) {
 		var p = document.createElement("div");
 		// p.style.height = ad.data.h + "px";
-
-		p.style.width = '100%';
+		if(clientW > staff.width) {
+			wid = staff.width;
+		}
+		p.style.width = wid + 'px';
 		p.style.overflow = "hidden";
 		var para = "?";
 		if (typeof ad.data.aid != "undefined") {
@@ -765,36 +1017,11 @@
 			}
 			href = " href='http://" + api._redirect + "/stat.log.redirect?url=" + escape(staff.landing_page) + "' "
 		}
-
-		var imgsrc = staff.addr.replace(/&(.*)/,'');
-		
-        p.innerHTML = "<a onclick='javascript:BCMain.click_js(\"" + click_js + '","' + escape(ad.data.third_click_js) + '","' + ad.sn + '","' + ad.data.aid + "\");' style='' " + href + " target='_blank'><img  width='100%'  border='0' src='" + imgsrc + "'/></a>";
-
-        setInterval(function(){
-        	if(window.orientation == 90 || window.orientation == -90){
-        		if(imgsrc != staff.addr.replace(/\/\/(.*)\/(.*?)&/,'//$1/')){
-        			imgsrc = staff.addr.replace(/\/\/(.*)\/(.*?)&/,'//$1/');
-        			 p.innerHTML = "<a onclick='javascript:BCMain.click_js(\"" + click_js + '","' + escape(ad.data.third_click_js) + '","' + ad.sn + '","' + ad.data.aid + "\");' style='' " + href + " target='_blank'><img  width='100%'  border='0' src='" + imgsrc + "'/></a>";
-        		}	
-        	}else if(window.orientation == 0 || window.orientation == 180){
-        		if(imgsrc != staff.addr.replace(/&(.*)/,'')){
-        			imgsrc = staff.addr.replace(/&(.*)/,'');
-        			 p.innerHTML = "<a onclick='javascript:BCMain.click_js(\"" + click_js + '","' + escape(ad.data.third_click_js) + '","' + ad.sn + '","' + ad.data.aid + "\");' style='' " + href + " target='_blank'><img  width='100%'  border='0' src='" + imgsrc + "'/></a>";
-        		}  
-        	}
-        },200);	
-
+		p.innerHTML = "<a onclick='javascript:BCMain.click_js(\"" + click_js + '","' + escape(ad.data.third_click_js) + '","' + ad.sn + '","' + ad.data.aid + "\");' style='' " + href + " target='_blank'><img  width='100%'  height='" + staff.height + "' border='0' src='" + staff.addr + "'/></a>";
 		api.show_js(show_js, escape(ad.data.third_show_js), ad.sn, ad.data.aid);
 		if (wrap != "") {
 			wrap.childNodes[0].appendChild(p)
 		}
-
-		
-
-
-       /* readdr();
-        window.onresize = readdr;*/
-        
 		var d = document.getElementById(ad.sn);
 		if (!d || !d.parentNode) {
 			var log = {
@@ -809,8 +1036,7 @@
 			api.log(log)
 		} else {
 			if (wrap != "") {
-				// d.parentNode.insertBefore(wrap, d)
-				bo.insertBefore(wrap,bfir);
+				d.parentNode.insertBefore(wrap, d)
 			} else {
 				d.parentNode.insertBefore(p, d)
 			}
@@ -827,9 +1053,11 @@
 	};
 	api.renderSwf = function(ad, staff, wrap) {
 		var p = document.createElement("div");
-		// p.style.height = ad.data.h + "px";
-
-		p.style.width = "100%";
+		p.style.height = ad.data.h + "px";
+		if(clientW > staff.width) {
+			wid = staff.width;
+		}
+		p.style.width = wid + 'px';
 		p.style.overflow = "hidden";
 		var para = "?";
 		if (typeof ad.data.aid != "undefined") {
@@ -849,22 +1077,22 @@
 		}
 		var click_js = ad.data.click_js + para;
 		var show_js = ad.data.show_js + para;
-		var h = '<div style="' + " width: " + ad.data.w + 'px; overflow: hidden;position:relative;">';
+		var h = '<div style="height: ' + ad.data.h + "px; width: " + ad.data.w + 'px; overflow: hidden;position:relative;">';
 		if (typeof staff.landing_page != "undefined" && staff.landing_page != "undefined") {
 			if (staff.landing_page.indexOf("http") == -1) {
 				staff.landing_page = "http://" + staff.landing_page
 			}
 			var href = "http://" + api._redirect + "/stat.log.redirect?url=" + escape(staff.landing_page);
-			h += "<a onclick=\"javascript:BCMain.click_js('" + click_js + "','" + escape(ad.data.third_click_js) + "','" + ad.sn + "','" + ad.data.aid + '\');" href="' + href + '" target="_blank" style="position: absolute;left:0px;top: 0px;width:' + ad.data.w + "px;"  + '">';
+			h += "<a onclick=\"javascript:BCMain.click_js('" + click_js + "','" + escape(ad.data.third_click_js) + "','" + ad.sn + "','" + ad.data.aid + '\');" href="' + href + '" target="_blank" style="position: absolute;left:0px;top: 0px;width:' + ad.data.w + "px;height:" + ad.data.h + 'px">';
 			h += '<object type="img/gif" style="border:0px"  border=0>';
-			h += '<img width="100%" src="http://' + api._js + '/assets/images/null.gif" style="border:0px"  />';
+			h += '<img width="100%" src="http://' + api._js + '/assets/images/null.gif" style="border:0px" height="100%" />';
 			h += "</object>";
 			h += "</a>   "
 		}
-		h += '<object width="' + ad.data.w + '""' + '">';
+		h += '<object width="' + ad.data.w + '" height="' + ad.data.h + '">';
 		h += '<param name="movie" value="' + staff.addr + '">';
 		h += '<param name="wmode" value="transparent">';
-		h += '<embed src="' + staff.addr + '" type="application/x-shockwave-flash" menu="false" wmode="transparent" style="width:' + ad.data.w + "px;"  + '"/>';
+		h += '<embed src="' + staff.addr + '" type="application/x-shockwave-flash" menu="false" wmode="transparent" style="width:' + ad.data.w + "px;height:" + ad.data.h + 'px"/>';
 		h += "</object>";
 		h += "</div>";
 		p.innerHTML = h;
@@ -886,8 +1114,7 @@
 			api.log(log)
 		} else {
 			if (wrap != "") {
-				// d.parentNode.insertBefore(wrap, d)
-				bo.insertBefore(wrap,bfir);
+				d.parentNode.insertBefore(wrap, d)
 			} else {
 				d.parentNode.insertBefore(p, d)
 			}
@@ -994,7 +1221,7 @@
 		}
 		var p = document.createElement("iframe");
 		p.frameBorder = "0";
-		// p.style.height = ad.data.h + "px";
+		p.style.height = ad.data.h + "px";
 		p.style.width = ad.data.w + "px";
 		p.style.overflow = "hidden";
 		p.style.border = "0px";
@@ -1075,7 +1302,7 @@
 		}
 		var p = document.createElement("iframe");
 		p.frameBorder = "0";
-		// p.style.height = ad.data.h + "px";
+		p.style.height = ad.data.h + "px";
 		p.style.width = ad.data.w + "px";
 		p.style.overflow = "hidden";
 		p.style.border = "0px";
@@ -1177,7 +1404,7 @@
 			/*setTimeout(function(){
 				s.parentNode.removeChild(s);
 			},5000);*/
-			
+
 		} catch (e) {
 			document.write(str)
 		}
@@ -1445,7 +1672,7 @@
 				return true
 			} catch (q) {}
 		}
-		var b = "" + ",width=" + api.w + ",left=0,top=0,toolbar=yes,location=yes,status=yes,menubar=yes,scrollbars=yes,resizable=yes";
+		var b = "height=" + api.h + ",width=" + api.w + ",left=0,top=0,toolbar=yes,location=yes,status=yes,menubar=yes,scrollbars=yes,resizable=yes";
 		if (this.ver.sg || this.ver.mt) {
 			var j = 'window.open("/", "_blank", "' + b + '")'
 		} else {
@@ -1493,9 +1720,9 @@
 			el.style.top = t + "px";
 			el.style.width = "100%";
 			if (d.clientHeight < 500) {
-				// el.style.height = 600 + "px"
+				el.style.height = 600 + "px"
 			} else {
-				// el.style.height = d.clientHeight + "px"
+				el.style.height = d.clientHeight + "px"
 			}
 		}, 200);
 		api.api_bg_linkUp(tmpId);
