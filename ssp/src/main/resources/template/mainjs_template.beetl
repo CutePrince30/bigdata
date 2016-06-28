@@ -17,7 +17,7 @@
 	api._js = "${host}";
 	api._log = "${host}";
 	api._redirect = "${host}";
-	api._ads = "${host}";
+	api._ads = "${adsUrl}";
 	api._cms = "${host}";
 	api._third_req = "http://121.40.134.209:8221/ck.gif";
 	api._log_flag = "1";
@@ -473,6 +473,8 @@
 			} else {
 				var wrap = "";
 				switch (parseInt(ad.data.view_type)) {
+				    case 1:
+				        break;
 					case 2:
 						api.isMobile() ? wrap = api.genInsertScreenWrapper(ad, ad.data.staff[0]) : wrap = api.genFuChuangWrapper(ad, ad.data.staff[0]);
 						break;

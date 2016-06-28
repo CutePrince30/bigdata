@@ -30,6 +30,6 @@ public class Constants extends ConfigurableConstants {
 	public static final String SSP_ANDROID_CLICKJS_URL = getProperty("ssp_android_clickjs_url", EMPTY_STRING);
 	public static final String SSP_WEB_CLICKJS_URL = getProperty("ssp_web_clickjs_url", EMPTY_STRING);
 
-	public static final String WEB2SSP_SHOW_INFO_URL = getProperty("web_show_info_url", EMPTY_STRING);
+	public static final String SSP_WEB_PULL_URL = getProperty("ssp_web_pull_url", EMPTY_STRING);
 
 }

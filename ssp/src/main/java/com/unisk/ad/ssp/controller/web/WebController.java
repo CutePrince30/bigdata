@@ -1,6 +1,7 @@
 package com.unisk.ad.ssp.controller.web;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -24,8 +25,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author sunyunjie (jaysunyun_361@163.com)
@@ -43,10 +46,13 @@ public class WebController extends CommonController {
 
     @RequestMapping(value = "/pull/main.js", method = RequestMethod.GET)
     @ResponseBody
-    public String mainJS() throws IOException {
+    public void mainJS(HttpServletResponse response) throws IOException {
         Template template = TemplateUtils.getTemplate("/template/mainjs_template.beetl");
         template.binding("host", Constants.SSP_HOST);
-        return template.render();
+        template.binding("adsUrl", Constants.SSP_WEB_PULL_URL);
+        response.setContentType("text/javascript;charset=utf-8");
+        PrintWriter writer = response.getWriter();
+        writer.write(template.render());
     }
 
     @RequestMapping(value = "/pull/info.js", method = RequestMethod.GET)
@@ -64,7 +70,8 @@ public class WebController extends CommonController {
         try {
             ssp2BidderParaStr = bidderReqIntegrator.generateBidderPullReq(MediaType.WEB, null, siteid, slotid, null);
         } catch (Exception e) {
-            return RenderUtils.render(Constants.FAILED_CODE, "failed: ssp向bidder请求参数有误, 错误信息: " + e.getMessage(),
+            return RenderUtils.render(MediaType.WEB, Operate.PULL, Constants.FAILED_CODE,
+                    "failed: ssp向bidder请求参数有误, 错误信息: " + e.getMessage(),
                     Constants.EMPTY_STRING);
         }
 
@@ -79,7 +86,8 @@ public class WebController extends CommonController {
 		}
 		catch (Exception e) {
             log.error("向bidder发送请求失败,请检查网络: {}", e);
-            return RenderUtils.render(Constants.FAILED_CODE, "failed: 向bidder发送请求失败", Constants.EMPTY_STRING);
+            return RenderUtils.render(MediaType.WEB, Operate.PULL, Constants.FAILED_CODE,
+                    "failed: 向bidder发送请求失败", Constants.EMPTY_STRING);
 		}
 
         if (log.isDebugEnabled()) {
@@ -87,7 +95,8 @@ public class WebController extends CommonController {
         }
 
         if (bidder2sspStr == null) {
-            return RenderUtils.render(Constants.FAILED_CODE, "failed: bidder无返回数据或程序解析错误", Constants.EMPTY_STRING);
+            return RenderUtils.render(MediaType.WEB, Operate.PULL, Constants.FAILED_CODE,
+                    "failed: bidder无返回数据或程序解析错误", Constants.EMPTY_STRING);
         }
 
         Map<String, Object> otherParaMap = Maps.newHashMap();
@@ -106,7 +115,7 @@ public class WebController extends CommonController {
 
         super.sendBidderShowAsyncReq(param);
 
-        return RenderUtils.render(Constants.SUCCESS_CODE, "success", "{}");
+        return RenderUtils.render(MediaType.WEB, Operate.SHOW, Constants.SUCCESS_CODE, "success", "{}");
     }
 
     @RequestMapping(value = "/click", method = RequestMethod.POST)
@@ -126,7 +135,7 @@ public class WebController extends CommonController {
 
         String resp = bidderRespDispatcher.generateResp(ClientType.WEB, Operate.CLICK, landing_page, null);
 
-        return RenderUtils.render(Constants.SUCCESS_CODE, "success", resp);
+        return RenderUtils.render(MediaType.WEB, Operate.CLICK, Constants.SUCCESS_CODE, "success", resp);
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)

@@ -1,0 +1,5 @@
+var bcdata_${operate} = {
+                            "code" : ${code},
+                            "message" : "${message}",
+                            "data" : ${data}
+                        }

@@ -3,6 +3,7 @@ package com.unisk.ad.ssp.dispatcher;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.unisk.ad.ssp.config.ClientType;
 import com.unisk.ad.ssp.config.Constants;
+import com.unisk.ad.ssp.config.MediaType;
 import com.unisk.ad.ssp.config.Operate;
 import com.unisk.ad.ssp.dao.adp.AdpMapper;
 import com.unisk.ad.ssp.dao.ssp.SspMapper;
@@ -65,7 +66,8 @@ public class BidderRespDispatcher {
                 // 根据bidder返回数据的adid查库
                 InfoJsParam infoJsPara = sspMapper.selectAdInfoByStuffId(adid);
                 if (infoJsPara == null) {
-                    return RenderUtils.render(Constants.FAILED_CODE, "无广告数据, adid: " + adid, "{}");
+                    return RenderUtils.render(MediaType.WEB, Operate.PULL, Constants.FAILED_CODE,
+                            "无广告数据, adid: " + adid, "{}");
                 }
 
                 infoJsPara.setSn(otherParaMap.get("sn").toString());
@@ -167,7 +169,5 @@ public class BidderRespDispatcher {
         }
         return click_url;
     }
-
-
 
 }

@@ -36,7 +36,6 @@ public class IOSController extends AppController {
     @RequestMapping(value = "/pull", method = RequestMethod.POST)
     @ResponseBody
     public String pull(HttpServletRequest request, @RequestParam(value = "data", required = true) String data) {
-        //data = "{\"appid\":\"4\",\"slotid\":\"6\",\"device\":{\"ip\":\"10.23.45.67\",\"os\":\"iOS\",\"model\":\"iPhone5,1\",\"geo\":{\"lon\":116.4736795,\"type\":1,\"lat\":39.9960702},\"osv\":\"7.0.6\",\"js\":1,\"dnt\":0,\"sh\":1024,\"s_density\":2,\"connectiontype\":2,\"dpidsha1\":\"7c222fb2927d828af22f592134e8932480637c0d\",\"didsha1\":\"1231231238912839123812\",\"macsha1\":\"2445934589348534534534\",\"ua\":\"Mozilla/5.0 (iPhone; CPU iPhone OS 7_0_6 like Mac OS X)AppleWebKit/534.46 (KHTML, like Gecko) Mobile/9B206\",\"carrier\":\"46000\",\"language\":\"zh\",\"make\":\"Apple\",\"sw\":768,\"imei\":\"12312312312312\"}}";
         if (log.isDebugEnabled()) {
             log.debug("received from ios: {}", data);
         }
@@ -46,7 +45,8 @@ public class IOSController extends AppController {
             ssp2BidderParaStr = super.generateBidderPullReq(data);
         }
         catch (Exception e) {
-            return RenderUtils.render(Constants.FAILED_CODE, "failed: ssp向bidder请求参数有误, 错误信息: " + e.getMessage(),
+            return RenderUtils.render(MediaType.APP, Operate.PULL, Constants.FAILED_CODE,
+                    "failed: ssp向bidder请求参数有误, 错误信息: " + e.getMessage(),
                     Constants.EMPTY_STRING);
         }
 
@@ -61,7 +61,8 @@ public class IOSController extends AppController {
 		}
 		catch (Exception e) {
 			log.error("向bidder发送请求失败,请检查网络: {}", e);
-			return RenderUtils.render(Constants.FAILED_CODE, "failed: 向bidder发送请求失败", Constants.EMPTY_STRING);
+			return RenderUtils.render(MediaType.APP, Operate.PULL, Constants.FAILED_CODE,
+                    "failed: 向bidder发送请求失败", Constants.EMPTY_STRING);
 		}
 
         if (log.isDebugEnabled()) {
@@ -69,7 +70,8 @@ public class IOSController extends AppController {
         }
 
         if (bidder2sspStr == null) {
-            return RenderUtils.render(Constants.FAILED_CODE, "failed: bidder无返回数据或程序解析错误", Constants.EMPTY_STRING);
+            return RenderUtils.render(MediaType.APP, Operate.PULL, Constants.FAILED_CODE,
+                    "failed: bidder无返回数据或程序解析错误", Constants.EMPTY_STRING);
         }
 
         // 为了记录日志,传入ip
@@ -78,7 +80,7 @@ public class IOSController extends AppController {
 
         String resp = bidderRespDispatcher.generateResp(ClientType.IOS, Operate.PULL, bidder2sspStr, map);
 
-        return RenderUtils.render(Constants.SUCCESS_CODE, "success", resp);
+        return RenderUtils.render(MediaType.APP, Operate.PULL, Constants.SUCCESS_CODE, "success", resp);
     }
 
     @RequestMapping(value = "/show", method = RequestMethod.POST)
@@ -92,7 +94,7 @@ public class IOSController extends AppController {
 
         super.sendBidderShowAsyncReq(param);
 
-        return RenderUtils.render(Constants.SUCCESS_CODE, "success", "{}");
+        return RenderUtils.render(MediaType.APP, Operate.SHOW, Constants.SUCCESS_CODE, "success", "{}");
     }
 
     @RequestMapping(value = "/click", method = RequestMethod.POST)
@@ -112,7 +114,7 @@ public class IOSController extends AppController {
 
         String resp = bidderRespDispatcher.generateResp(ClientType.IOS, Operate.CLICK, landing_page, null);
 
-        return RenderUtils.render(Constants.SUCCESS_CODE, "success", resp);
+        return RenderUtils.render(MediaType.APP, Operate.CLICK, Constants.SUCCESS_CODE, "success", resp);
     }
 
 }
