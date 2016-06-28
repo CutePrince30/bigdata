@@ -29,6 +29,7 @@
 		<result column="height" property="height" jdbcType="INTEGER" />
 		<result column="show_js" property="thirdShowJs" jdbcType="VARCHAR" />
 		<result column="click_js" property="thirdClickJs" jdbcType="VARCHAR" />
+		<result column="landing_page" property="landingPage" jdbcType="VARCHAR" />
 		<result column="addr" property="addr" jdbcType="VARCHAR" />
 		<result column="text" property="text" jdbcType="VARCHAR" />
 	</resultMap>
