@@ -34,24 +34,29 @@ public class BidderReqIntegrator {
         // 渠道信息
         Ssp2BidderPullParam mediaInfo;
 
-        if (mt.equals(MediaType.WEB)) {
-            // 网站信息
-            mediaInfo = sspMapper.selectSiteInfoByMediaId(siteid);
-        }
-        else {
-            // app信息
-            mediaInfo = sspMapper.selectAppInfoByMediaId(appid);
-        }
+        String mediaid = mt.equals(MediaType.WEB) ? siteid : appid;
+
+        mediaInfo = mt.equals(MediaType.WEB) ? sspMapper.selectSiteInfoByMediaId(mediaid) :
+                sspMapper.selectAppInfoByMediaId(mediaid);
 
         Ssp2BidderPullParam ssp2BidderParameter = new Ssp2BidderPullParam();
+
         if (zoneInfo == null) {
+            ssp2BidderParameter.setSlotid(zoneid);
             log.warn("无广告位信息, zoneid: " + zoneid);
         }
         else {
             BeanUtils.merge(zoneInfo, ssp2BidderParameter);
         }
+
         if (mediaInfo == null) {
-            log.warn("无渠道信息, mediaid: " + mediaInfo);
+            if (mt.equals(MediaType.WEB)) {
+                ssp2BidderParameter.setSiteid(mediaid);
+            }
+            else {
+                ssp2BidderParameter.setAppid(mediaid);
+            }
+            log.warn("无渠道信息, mediaid: " + mediaid);
         }
         else {
             BeanUtils.merge(mediaInfo, ssp2BidderParameter);

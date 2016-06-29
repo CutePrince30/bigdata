@@ -20,10 +20,10 @@
     "imp": [
         {
             "id" : "${obj.slotid}",
-            "instl" : ${obj.instl},
+            "instl" : ${obj.instl!0},
             "banner" : {
-                "w" : ${obj.width},
-                "h" : ${obj.height},
+                "w" : ${obj.width!0},
+                "h" : ${obj.height!0},
                 "pos" : 1
             }
         }

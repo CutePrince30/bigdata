@@ -50,6 +50,7 @@ public class BidderRespDispatcher {
             case PULL:
                 // 解析bidder返回的数据
                 JsonNode node = JsonUtils.readTree(respStr);
+                String isDefault = JsonUtils.readValueAsText(node, "isdefault");
                 String adid = JsonUtils.readValueAsText(node, "adid");
                 final String wurl = JsonUtils.readValueAsText(node, "wurl");
 
@@ -63,11 +64,29 @@ public class BidderRespDispatcher {
                 String showJs = getShowUrl(ct) + "?" + param;
                 String clickJs = getClickUrl(ct) + "?" + param;
 
-                // 根据bidder返回数据的adid查库
-                InfoJsParam infoJsPara = sspMapper.selectAdInfoByStuffId(adid);
-                if (infoJsPara == null) {
-                    return RenderUtils.render(MediaType.WEB, Operate.PULL, Constants.FAILED_CODE,
-                            "无广告数据, adid: " + adid, "{}");
+                InfoJsParam infoJsPara = null;
+                if (isDefault.equals("0")) {
+                    // 正常广告,根据bidder返回数据的adid查库
+                    infoJsPara = sspMapper.selectAdInfoByStuffId(adid);
+                    if (infoJsPara == null) {
+                        return RenderUtils.render(MediaType.WEB, Operate.PULL, Constants.FAILED_CODE,
+                                "无广告数据, adid: " + adid, "{}");
+                    }
+                }
+                else {
+                    // 默认广告,根据bidder返回的数据生成infoJsPara
+                    String width = JsonUtils.readValueAsText(node, "adw");
+                    String height = JsonUtils.readValueAsText(node, "adh");
+                    String landingPage = JsonUtils.readValueAsText(node, "adurl");
+                    String addr = JsonUtils.readValueAsText(node, "adi");
+                    String spid = UrlUtils.URLRequest(wurl).get("spid");
+                    infoJsPara = new InfoJsParam();
+                    infoJsPara.setAdid(adid);
+                    infoJsPara.setSpid(spid);
+                    infoJsPara.setWidth(width);
+                    infoJsPara.setHeight(height);
+                    infoJsPara.setLandingPage(landingPage);
+                    infoJsPara.setAddr(addr);
                 }
 
                 infoJsPara.setSn(otherParaMap.get("sn").toString());
@@ -101,14 +120,14 @@ public class BidderRespDispatcher {
 
         switch (op) {
             case PULL:
-                JsonNode bidder2sspNode = JsonUtils.readTree(respStr);
-                String id = JsonUtils.readValueAsText(bidder2sspNode, "id");
-                String adid = JsonUtils.readValueAsText(bidder2sspNode, "adid");
-                String addr = JsonUtils.readValueAsText(bidder2sspNode, "adi");
-                String width = JsonUtils.readValueAsText(bidder2sspNode, "adw");
-                String height = JsonUtils.readValueAsText(bidder2sspNode, "adh");
-                String landingPage = JsonUtils.readValueAsText(bidder2sspNode, "adurl");
-                final String wurl = JsonUtils.readValueAsText(bidder2sspNode, "wurl");
+                JsonNode node = JsonUtils.readTree(respStr);
+                String id = JsonUtils.readValueAsText(node, "id");
+                String adid = JsonUtils.readValueAsText(node, "adid");
+                String addr = JsonUtils.readValueAsText(node, "adi");
+                String width = JsonUtils.readValueAsText(node, "adw");
+                String height = JsonUtils.readValueAsText(node, "adh");
+                String landingPage = JsonUtils.readValueAsText(node, "adurl");
+                final String wurl = JsonUtils.readValueAsText(node, "wurl");
 
                 // 返回bidder请求结果
                 new Thread() {

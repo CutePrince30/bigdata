@@ -78,7 +78,14 @@ public class IOSController extends AppController {
         Map<String, Object> map = Maps.newHashMap();
         map.put("ip", request.getRemoteHost());
 
-        String resp = bidderRespDispatcher.generateResp(ClientType.IOS, Operate.PULL, bidder2sspStr, map);
+        String resp = null;
+        try {
+            resp = bidderRespDispatcher.generateResp(ClientType.IOS, Operate.PULL, bidder2sspStr, map);
+        }
+        catch (Exception e) {
+            return RenderUtils.render(MediaType.APP, Operate.PULL, Constants.FAILED_CODE,
+                    "解析bidder数据异常: " + bidder2sspStr, "{}");
+        }
 
         return RenderUtils.render(MediaType.APP, Operate.PULL, Constants.SUCCESS_CODE, "success", resp);
     }

@@ -1488,6 +1488,7 @@
 		} else {
 			para += "&mobileFixed=0"
 		}
+		para += typeof siteid != "undefined" ? "&siteid="+siteid : "&siteid=0";
 		para += "&width_page=" + w_width;
 		para += "&width_screen=" + s_width;
 		para += "&url=" + escape(window.location.href);

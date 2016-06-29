@@ -103,7 +103,14 @@ public class WebController extends CommonController {
         otherParaMap.put("sn", sn);
         otherParaMap.put("ip", request.getRemoteHost());
 
-        String resp = bidderRespDispatcher.generateResp(ClientType.WEB, Operate.PULL, bidder2sspStr, otherParaMap);
+        String resp = null;
+        try {
+            resp = bidderRespDispatcher.generateResp(ClientType.WEB, Operate.PULL, bidder2sspStr, otherParaMap);
+        }
+        catch (Exception e) {
+            resp = RenderUtils.render(MediaType.WEB, Operate.PULL, Constants.FAILED_CODE,
+                    "解析bidder数据异常: " + bidder2sspStr, "{}");
+        }
 
         return resp;
     }
