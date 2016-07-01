@@ -24,8 +24,8 @@ public class Log {
     // 用户id
     private String userId;
 
-    // 广告id
-    private String adId;
+    // 广告位id
+    private String zoneId;
 
     // 请求id
     private String pushId;
@@ -50,7 +50,7 @@ public class Log {
     }
 
     public Log(String name, String version, String source, String exchangeUserId,
-               Date time, String userId, String adId,
+               Date time, String userId, String zoneId,
                String pushId, String ip, String region,
                String bidPrice, String costPrice, String mediaName) {
         this.name = name;
@@ -59,7 +59,7 @@ public class Log {
         this.exchangeUserId = exchangeUserId;
         this.time = time;
         this.userId = userId;
-        this.adId = adId;
+        this.zoneId = zoneId;
         this.pushId = pushId;
         this.ip = ip;
         this.region = region;
@@ -116,12 +116,12 @@ public class Log {
         this.userId = userId;
     }
 
-    public String getAdId() {
-        return adId;
+    public String getZoneId() {
+        return zoneId;
     }
 
-    public void setAdId(String adId) {
-        this.adId = adId;
+    public void setZoneId(String zoneId) {
+        this.zoneId = zoneId;
     }
 
     public String getPushId() {

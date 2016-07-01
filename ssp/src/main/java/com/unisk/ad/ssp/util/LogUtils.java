@@ -31,7 +31,7 @@ public class LogUtils {
         sb.append(LOG_SEPERATOR);
         sb.append(defaultIfEmpty(log.getUserId()));
         sb.append(LOG_SEPERATOR);
-        sb.append(defaultIfEmpty(log.getAdId()));
+        sb.append(defaultIfEmpty(log.getZoneId()));
         sb.append(LOG_SEPERATOR);
         sb.append(defaultIfEmpty(log.getPushId()));
         sb.append(LOG_SEPERATOR);
