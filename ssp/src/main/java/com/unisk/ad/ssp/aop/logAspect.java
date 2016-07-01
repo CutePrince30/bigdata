@@ -17,6 +17,8 @@ import java.util.Date;
 import java.util.Map;
 
 /**
+ * 日志记录切面
+ *
  * @author sunyunjie (jaysunyun_361@163.com)
  */
 @Aspect
@@ -36,7 +38,7 @@ public class LogAspect {
         Object[] args = point.getArgs();
         HttpServletRequest request = (HttpServletRequest) args[0];
         final String ip = request.getRemoteHost();
-        final String adid = request.getParameter("adid");
+        final String zoneid = request.getParameter("zoneid");
         final String pushid = request.getParameter("pushid");
         final String mediaName = request.getParameter("appname");
 
@@ -44,7 +46,7 @@ public class LogAspect {
             @Override
             public void run() {
                 Log log = new Log(SSP_SHOW, VERSION, SOURCE, null, new Date(),
-                        null, adid, pushid, ip, null, null, null, mediaName);
+                        null, zoneid, pushid, ip, null, null, null, mediaName);
                 String log_str = LogUtils.genarateLogLine(log);
                 logger.info(log_str);
             }
@@ -56,7 +58,7 @@ public class LogAspect {
         Object[] args = point.getArgs();
         HttpServletRequest request = (HttpServletRequest) args[0];
         final String ip = request.getRemoteHost();
-        final String adid = request.getParameter("adid");
+        final String zoneid = request.getParameter("zoneid");
         final String pushid = request.getParameter("pushid");
         final String mediaName = request.getParameter("site_name");
 
@@ -64,7 +66,7 @@ public class LogAspect {
             @Override
             public void run() {
                 Log log = new Log(SSP_SHOW, VERSION, SOURCE, null, new Date(),
-                        null, adid, pushid, ip, null, null, null, mediaName);
+                        null, zoneid, pushid, ip, null, null, null, mediaName);
                 String log_str = LogUtils.genarateLogLine(log);
                 logger.info(log_str);
             }
@@ -76,7 +78,7 @@ public class LogAspect {
         Object[] args = point.getArgs();
         HttpServletRequest request = (HttpServletRequest) args[0];
         final String ip = request.getRemoteHost();
-        final String adid = request.getParameter("adid");
+        final String zoneid = request.getParameter("zoneid");
         final String pushid = request.getParameter("pushid");
         final String mediaName = request.getParameter("appname");
 
@@ -84,7 +86,7 @@ public class LogAspect {
             @Override
             public void run() {
                 Log log = new Log(SSP_CLICK, VERSION, SOURCE, null, new Date(),
-                        null, adid, pushid, ip, null, null, null, mediaName);
+                        null, zoneid, pushid, ip, null, null, null, mediaName);
                 String log_str = LogUtils.genarateLogLine(log);
                 logger.info(log_str);
             }
@@ -96,7 +98,7 @@ public class LogAspect {
         Object[] args = point.getArgs();
         HttpServletRequest request = (HttpServletRequest) args[0];
         final String ip = request.getRemoteHost();
-        final String adid = request.getParameter("adid");
+        final String zoneid = request.getParameter("zoneid");
         final String pushid = request.getParameter("pushid");
         final String mediaName = request.getParameter("site_name");
 
@@ -104,7 +106,7 @@ public class LogAspect {
             @Override
             public void run() {
                 Log log = new Log(SSP_CLICK, VERSION, SOURCE, null, new Date(),
-                        null, adid, pushid, ip, null, null, null, mediaName);
+                        null, zoneid, pushid, ip, null, null, null, mediaName);
                 String log_str = LogUtils.genarateLogLine(log);
                 logger.info(log_str);
             }
@@ -122,7 +124,7 @@ public class LogAspect {
 
                 String jsonStr = args[2].toString();
                 JsonNode jsonNode = JsonUtils.readTree(jsonStr);
-                String adid = JsonUtils.readValueAsText(jsonNode, "adid");
+                String zoneid = JsonUtils.readValueAsText(jsonNode, "impid");
                 String wurl = JsonUtils.readValueAsText(jsonNode, "wurl");
 
                 Map<String, String> urlMap = UrlUtils.URLRequest(wurl);
@@ -130,7 +132,7 @@ public class LogAspect {
                 String mediaName = urlMap.get("appname");
 
                 Log log = new Log(LogAspect.SSP_PULL, LogAspect.VERSION, LogAspect.SOURCE, null, new Date(),
-                        null, adid, pushid, ip, null, null, null, mediaName);
+                        null, zoneid, pushid, ip, null, null, null, mediaName);
                 String log_str = LogUtils.genarateLogLine(log);
                 logger.info(log_str);
             }
