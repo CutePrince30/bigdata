@@ -15,7 +15,8 @@
         "site_id" : "${obj.siteid}",
         "site_name" : "${obj.siteName}",
         "page" : "${obj.sitePage}",
-        "refer" : "${obj.siteRefer}"
+        "refer" : "${obj.siteRefer}",
+        "ip" : "${obj.siteIp}"
     },
     "imp": [
         {

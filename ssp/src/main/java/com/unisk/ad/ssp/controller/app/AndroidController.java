@@ -6,11 +6,9 @@ import com.unisk.ad.ssp.config.ClientType;
 import com.unisk.ad.ssp.config.Constants;
 import com.unisk.ad.ssp.config.MediaType;
 import com.unisk.ad.ssp.config.Operate;
-import com.unisk.ad.ssp.model.LogParam;
 import com.unisk.ad.ssp.util.HttpUtils;
 import com.unisk.ad.ssp.util.JsonUtils;
 import com.unisk.ad.ssp.util.RenderUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -91,7 +89,7 @@ public class AndroidController extends AppController {
     @RequestMapping(value = "/show", method = RequestMethod.POST)
     @ResponseBody
     public String show(HttpServletRequest request, @RequestParam(value = "data", required = true) String data) {
-        String param = request.getQueryString();
+        String param = request.getQueryString() + "&ip=" + request.getRemoteHost();
 
         if (log.isDebugEnabled()) {
             log.debug("received from android: {}", data);
@@ -105,7 +103,7 @@ public class AndroidController extends AppController {
     @RequestMapping(value = "/click", method = RequestMethod.POST)
     @ResponseBody
     public String click(HttpServletRequest request, @RequestParam(value = "data", required = true) String data) {
-        String param = request.getQueryString();
+        String param = request.getQueryString() + "&ip=" + request.getRemoteHost();
 
         if (log.isDebugEnabled()) {
             log.debug("received from android: {}", data);

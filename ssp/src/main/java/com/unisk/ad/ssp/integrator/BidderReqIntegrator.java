@@ -28,7 +28,7 @@ public class BidderReqIntegrator {
     @Autowired
     protected SspMapper sspMapper;
 
-    public String generateBidderPullReq(MediaType mt, String appid, String siteid, String zoneid, String device) {
+    public String generateBidderPullReq(MediaType mt, String appid, String siteid, String zoneid, String device, String ip) {
         // 推广位信息
         Ssp2BidderPullParam zoneInfo = sspMapper.selectOneByZoneId(zoneid);
         // 渠道信息
@@ -52,6 +52,7 @@ public class BidderReqIntegrator {
         if (mediaInfo == null) {
             if (mt.equals(MediaType.WEB)) {
                 ssp2BidderParameter.setSiteid(mediaid);
+                ssp2BidderParameter.setSiteIp(ip);
             }
             else {
                 ssp2BidderParameter.setAppid(mediaid);

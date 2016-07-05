@@ -15,7 +15,6 @@ import com.unisk.ad.ssp.controller.CommonController;
 import com.unisk.ad.ssp.dispatcher.BidderRespDispatcher;
 import com.unisk.ad.ssp.integrator.BidderReqIntegrator;
 import com.unisk.ad.ssp.util.*;
-import org.apache.commons.lang3.StringUtils;
 import org.beetl.core.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -65,10 +63,11 @@ public class WebController extends CommonController {
             @RequestParam(value = "width_page", required = false) String width_page,
             @RequestParam(value = "width_screen", required = false) String width_screen)
             throws IOException {
+        String ip = request.getRemoteHost();
 
         String ssp2BidderParaStr = null;
         try {
-            ssp2BidderParaStr = bidderReqIntegrator.generateBidderPullReq(MediaType.WEB, null, siteid, slotid, null);
+            ssp2BidderParaStr = bidderReqIntegrator.generateBidderPullReq(MediaType.WEB, null, siteid, slotid, null, ip);
         } catch (Exception e) {
             return RenderUtils.render(MediaType.WEB, Operate.PULL, Constants.FAILED_CODE,
                     "failed: ssp向bidder请求参数有误, 错误信息: " + e.getMessage(),
@@ -101,7 +100,7 @@ public class WebController extends CommonController {
 
         Map<String, Object> otherParaMap = Maps.newHashMap();
         otherParaMap.put("sn", sn);
-        otherParaMap.put("ip", request.getRemoteHost());
+        otherParaMap.put("ip", ip);
 
         String resp = null;
         try {
@@ -118,7 +117,7 @@ public class WebController extends CommonController {
     @RequestMapping(value = "/show", method = RequestMethod.GET)
     @ResponseBody
     public String show(HttpServletRequest request) {
-        String param = request.getQueryString();
+        String param = request.getQueryString() + "&ip=" + request.getRemoteHost();
 
         super.sendBidderShowAsyncReq(param);
 
@@ -130,7 +129,7 @@ public class WebController extends CommonController {
     public void click(HttpServletRequest request,
                       HttpServletResponse response,
                       @RequestParam(value = "data", required = true) String data) throws IOException {
-        String param = request.getQueryString();
+        String param = request.getQueryString() + "&ip=" + request.getRemoteHost();
 
         if (log.isDebugEnabled()) {
             log.debug("received from web: {}", data);

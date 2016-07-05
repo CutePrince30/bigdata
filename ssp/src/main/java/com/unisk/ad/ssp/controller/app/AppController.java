@@ -37,7 +37,7 @@ public class AppController extends CommonController {
         String slotid = JsonUtils.readValueAsText(dataNode, "slotid");
         String device = dataNode.findPath("device").toString();
 
-        return bidderReqIntegrator.generateBidderPullReq(MediaType.APP, appid, null, slotid, device);
+        return bidderReqIntegrator.generateBidderPullReq(MediaType.APP, appid, null, slotid, device, null);
     }
 
 }

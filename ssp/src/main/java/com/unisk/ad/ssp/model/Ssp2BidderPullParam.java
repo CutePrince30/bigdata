@@ -31,6 +31,8 @@ public class Ssp2BidderPullParam {
 
     private String siteRefer;
 
+    private String siteIp;
+
     /* imp信息 */
     private String slotid;
 
@@ -189,4 +191,13 @@ public class Ssp2BidderPullParam {
     public void setSiteRefer(String siteRefer) {
         this.siteRefer = siteRefer;
     }
+
+    public String getSiteIp() {
+        return siteIp;
+    }
+
+    public void setSiteIp(String siteIp) {
+        this.siteIp = siteIp;
+    }
+
 }
