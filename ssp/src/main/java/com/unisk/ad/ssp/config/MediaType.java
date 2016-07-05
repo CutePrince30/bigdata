@@ -1,7 +1,7 @@
 package com.unisk.ad.ssp.config;
 
 /**
- * Created by sunyunjie on 6/4/16.
+ * @author sunyunjie (jaysunyun_361@163.com)
  */
 public enum MediaType {
 

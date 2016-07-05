@@ -127,7 +127,9 @@ public class WebController extends CommonController {
 
     @RequestMapping(value = "/click", method = RequestMethod.POST)
     @ResponseBody
-    public String click(HttpServletRequest request, @RequestParam(value = "data", required = true) String data) {
+    public void click(HttpServletRequest request,
+                      HttpServletResponse response,
+                      @RequestParam(value = "data", required = true) String data) throws IOException {
         String param = request.getQueryString();
 
         if (log.isDebugEnabled()) {
@@ -141,8 +143,10 @@ public class WebController extends CommonController {
         String landing_page = JsonUtils.readValueAsText(dataNode, "landing_page");
 
         String resp = bidderRespDispatcher.generateResp(ClientType.WEB, Operate.CLICK, landing_page, null);
+        String result = RenderUtils.render(MediaType.WEB, Operate.CLICK, Constants.SUCCESS_CODE, "success", resp);
 
-        return RenderUtils.render(MediaType.WEB, Operate.CLICK, Constants.SUCCESS_CODE, "success", resp);
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.getWriter().write(result);
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)

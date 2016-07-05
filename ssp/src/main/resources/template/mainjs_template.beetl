@@ -19,7 +19,6 @@
 	api._redirect = "${host}";
 	api._ads = "${adsUrl}";
 	api._cms = "${host}";
-	api._third_req = "http://121.40.134.209:8221/ck.gif";
 	api._log_flag = "1";
 	if (isAsync) {
 		api.load = function() {
@@ -357,7 +356,7 @@
 					p = s
 				}
 			}
-			var logUrl = "http://" + api._log + "/stat.log.test?" + p + "&rand=" + Math.random();
+			var logUrl = "http://" + api._log + "/ssp/web/show?" + p + "&rand=" + Math.random();
 			var img = new Image(1, 1);
 			img.src = logUrl;
 			img.onload = function() {
@@ -474,6 +473,7 @@
 				var wrap = "";
 				switch (parseInt(ad.data.view_type)) {
 				    case 1:
+				    	wrap = api.genNormal(ad, ad.data.staff[0]);
 				        break;
 					case 2:
 						api.isMobile() ? wrap = api.genInsertScreenWrapper(ad, ad.data.staff[0]) : wrap = api.genFuChuangWrapper(ad, ad.data.staff[0]);
@@ -1017,7 +1017,7 @@
 			if (staff.landing_page.indexOf("http") == -1) {
 				staff.landing_page = "http://" + staff.landing_page
 			}
-			href = " href='http://" + api._redirect + "/stat.log.redirect?url=" + escape(staff.landing_page) + "' "
+			href = " href='" + decodeURI(staff.landing_page) + "' "
 		}
 		p.innerHTML = "<a onclick='javascript:BCMain.click_js(\"" + click_js + '","' + escape(ad.data.third_click_js) + '","' + ad.sn + '","' + ad.data.aid + "\");' style='' " + href + " target='_blank'><img  width='100%'  height='" + staff.height + "' border='0' src='" + staff.addr + "'/></a>";
 		api.show_js(show_js, escape(ad.data.third_show_js), ad.sn, ad.data.aid);
@@ -1160,7 +1160,7 @@
 			if (staff.landing_page.indexOf("http") == -1) {
 				staff.landing_page = "http://" + staff.landing_page
 			}
-			href = " href='http://" + api._redirect + "/stat.log.redirect?url=" + escape(staff.landing_page) + "' "
+			href = " href='" + decodeURI(staff.landing_page) + "' "
 		}
 		if (show_js != "") {
 			api.show_js(show_js, escape(ad.data.third_show_js), ad.sn, ad.data.aid)
@@ -1219,7 +1219,7 @@
 			if (staff.landing_page.indexOf("http") == -1) {
 				staff.landing_page = "http://" + staff.landing_page
 			}
-			href = " href='http://" + api._redirect + "/stat.log.redirect?url=" + escape(staff.landing_page) + "' "
+			href = " href='" + decodeURI(staff.landing_page) + "' "
 		}
 		var p = document.createElement("iframe");
 		p.frameBorder = "0";
@@ -1300,7 +1300,7 @@
 			if (staff.landing_page.indexOf("http") == -1) {
 				staff.landing_page = "http://" + staff.landing_page
 			}
-			href = " href='http://" + api._redirect + "/stat.log.redirect?url=" + escape(staff.landing_page) + "' "
+			href = " href='" + decodeURI(staff.landing_page) + "' "
 		}
 		var p = document.createElement("iframe");
 		p.frameBorder = "0";
@@ -1422,9 +1422,7 @@
 		ele.parentNode.appendChild(s)
 	};
 	api.third_req = function() {
-		if (api._third_req) {
-			api.js(api._third_req, function() {})
-		}
+
 	};
 	api.show = function() {
 		var sn = "ads" + Math.ceil(Math.random() * 100000000);
