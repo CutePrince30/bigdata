@@ -22,5 +22,15 @@
 		<property name="shared" value="true" />
 		<property name="configLocation" value="classpath:ehcache.xml" />
 	</bean>
-	
+
+	<!-- 定义ehCache的工厂，并设置所使用的Cache name -->
+	<bean id="pushidCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+		<property name="cacheManager">
+			<ref local="ehcacheManager"/>
+		</property>
+		<property name="cacheName">
+			<value>pushidCache</value>
+		</property>
+	</bean>
+
 </beans>  
