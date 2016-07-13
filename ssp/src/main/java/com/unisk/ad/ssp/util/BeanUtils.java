@@ -35,7 +35,7 @@ public class BeanUtils {
                         }
                         break;
                     case "int":
-                        if (value != 0) {
+                        if ((int) value != 0) {
                             fields[i].set(destination, value);
                         }
                         break;
