@@ -1,6 +1,7 @@
 package com.unisk.ad.ssp.aop;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.unisk.ad.ssp.config.ClientType;
 import com.unisk.ad.ssp.config.Constants;
 import com.unisk.ad.ssp.config.MediaType;
 import com.unisk.ad.ssp.config.Operate;
@@ -144,30 +145,35 @@ public class LogAspect {
     @AfterReturning("execution(* com.unisk.ad.ssp.dispatcher.BidderRespDispatcher.generateResp(..))")
     public void afterPull(JoinPoint point) {
         final Object[] args = point.getArgs();
-        Map<String, Object> paramMap = (Map<String, Object>) args[3];
-        final String ip = paramMap.get("ip") != null ? paramMap.get("ip").toString() : null;
+        Operate op = (Operate) args[1];
 
-        String jsonStr = args[2].toString();
-        JsonNode jsonNode = JsonUtils.readTree(jsonStr);
-        final String zoneid = JsonUtils.readValueAsText(jsonNode, "impid");
-        String wurl = JsonUtils.readValueAsText(jsonNode, "wurl");
+        // 如果是pull请求,执行下述方法,其他的方法均跳过
+        if (op.equals(Operate.PULL)) {
+            Map<String, Object> paramMap = (Map<String, Object>) args[3];
+            final String ip = paramMap.get("ip") != null ? paramMap.get("ip").toString() : null;
 
-        Map<String, String> urlMap = UrlUtils.URLRequest(wurl);
-        final String pushid = urlMap.get("pushid");
-        final String mediaName = urlMap.get("appname");
+            String jsonStr = args[2].toString();
+            JsonNode jsonNode = JsonUtils.readTree(jsonStr);
+            final String zoneid = JsonUtils.readValueAsText(jsonNode, "impid");
+            String wurl = JsonUtils.readValueAsText(jsonNode, "wurl");
 
-        // cache it
-        pushidCache.put(new Element(pushid, ip));
+            Map<String, String> urlMap = UrlUtils.URLRequest(wurl);
+            final String pushid = urlMap.get("pushid");
+            final String mediaName = urlMap.get("appname");
 
-        new Thread() {
-            @Override
-            public void run() {
-                Log log = new Log(LogAspect.SSP_PULL, LogAspect.VERSION, LogAspect.SOURCE, null, new Date(),
-                        null, zoneid, pushid, ip, null, null, null, mediaName);
-                String log_str = LogUtils.genarateLogLine(log);
-                syslog.info(log_str);
-            }
-        }.start();
+            // cache it
+            pushidCache.put(new Element(pushid, ip));
+
+            new Thread() {
+                @Override
+                public void run() {
+                    Log log = new Log(LogAspect.SSP_PULL, LogAspect.VERSION, LogAspect.SOURCE, null, new Date(),
+                            null, zoneid, pushid, ip, null, null, null, mediaName);
+                    String log_str = LogUtils.genarateLogLine(log);
+                    syslog.info(log_str);
+                }
+            }.start();
+        }
     }
 
 }
